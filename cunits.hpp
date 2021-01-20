@@ -72,13 +72,14 @@ public:
   {
     return !(*this == a);
   }
-
-  bool
-  includes(const self &a) const
-  {
-    return m_min <= a.m_min && a.m_max <= m_max;
-  }
 };
+
+template <typename T>
+bool
+includes(const cunits<T> &a, const cunits<T> &b) const
+{
+  return a.m_min <= b.m_min && b.m_max <= a.m_max;
+}
 
 template <typename T>
 std::ostream &
