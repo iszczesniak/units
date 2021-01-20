@@ -11,6 +11,10 @@
 template <typename T>
 class cunits
 {
+  // I need to keep these fields private, so that they are not
+  // mistakenly modified outside of class.  I can't make these fields
+  // const, because STL containers require the element type be
+  // assignable, and const members cannot be assigned.
   T m_min;
   T m_max;
 
