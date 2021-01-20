@@ -9,11 +9,12 @@
 // max is not.
 
 template <typename T>
-struct cunits
+class cunits
 {
-  const T m_min;
-  const T m_max;
+  T m_min;
+  T m_max;
 
+public:
   cunits(): m_min(0), m_max(0)
   {
   }
@@ -69,6 +70,9 @@ struct cunits
   {
     return !(*this == a);
   }
+
+  friend bool
+  includes<>(const cunits &, const cunits &);
 };
 
 template <typename T>
