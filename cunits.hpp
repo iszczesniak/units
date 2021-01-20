@@ -9,14 +9,13 @@
 // max is not.
 
 template <typename T>
-class cunits
+struct cunits
 {
   using self = cunits<T>;
 
-  T m_min;
-  T m_max;
+  const T m_min;
+  const T m_max;
 
-public:
   cunits(): m_min(0), m_max(0)
   {
   }
