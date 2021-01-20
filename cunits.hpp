@@ -11,8 +11,6 @@
 template <typename T>
 struct cunits
 {
-  using self = cunits<T>;
-
   const T m_min;
   const T m_max;
 
@@ -55,19 +53,19 @@ struct cunits
   }
 
   bool
-  operator < (const self &a) const
+  operator < (const cunits &a) const
   {
     return m_min != a.m_min ? m_min < a.m_min : m_max < a.m_max;
   }
 
   bool
-  operator == (const self &a) const
+  operator == (const cunits &a) const
   {
     return m_min == a.m_min && m_max == a.m_max;
   }
 
   bool
-  operator != (const self &a) const
+  operator != (const cunits &a) const
   {
     return !(*this == a);
   }
