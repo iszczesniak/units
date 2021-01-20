@@ -75,7 +75,7 @@ struct cunits
 
 template <typename T>
 bool
-includes(const cunits<T> &a, const cunits<T> &b) const
+includes(const cunits<T> &a, const cunits<T> &b)
 {
   return a.m_min <= b.m_min && b.m_max <= a.m_max;
 }
