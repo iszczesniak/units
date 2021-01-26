@@ -11,22 +11,23 @@
 #include <numeric>
 #include <vector>
 
+template <typename T>
+struct cunits_cmp
+{
+  bool
+  operator()(const cunits<T> &a, const cunits<T> &b)
+  {
+    return a.max() <= b.min();
+  }
+};
+
 // The set of units.
 template <typename T>
 class sunits: private std::vector<cunits<T>>
 {
   using data_type = cunits<T>;
+  using data_type_cmp = cunits_cmp<T>;
   using base = std::vector<data_type>;
-  using self = sunits<T>;
-
-  struct data_type_cmp
-  {
-    bool
-    operator()(const data_type &a, const data_type &b)
-    {
-      return a.max() <= b.min();
-    }
-  };
 
 public:
   sunits()
@@ -57,7 +58,7 @@ public:
   }
 
   bool
-  operator < (const self &a) const
+  operator < (const sunits &a) const
   {
     return static_cast<base>(*this) < static_cast<base>(a);
   }
@@ -134,38 +135,7 @@ public:
   }
 
   bool
-  includes(const data_type &cu) const
-  {
-    auto i = std::upper_bound(begin(), end(), cu, data_type_cmp());
-    return i != begin() && (--i)->includes(cu);
-  }
-
-  bool
-  includes(const self &a) const
-  {
-    auto i = begin();
-
-    // Every cu of a, has to be in *this.
-    for(const auto &cu: a)
-      while(true)
-        {
-          if (i == end())
-            return false;
-
-          if (i->includes(cu))
-            break;
-
-          if (cu.min() < i->min())
-            return false;
-
-          ++i;
-        }
-
-    return true;
-  }
-
-  bool
-  operator == (const self &a) const
+  operator == (const sunits &a) const
   {
     if (size() != a.size())
       return false;
@@ -178,7 +148,7 @@ public:
   }
 
   bool
-  operator != (const self &a) const
+  operator != (const sunits &a) const
   {
     return !(*this == a);
   }
@@ -196,6 +166,41 @@ private:
     return true;
   }
 };
+
+template <typename T>
+bool
+includes(const sunits<T> &su, const cunits<T> &cu)
+{
+  auto i = std::upper_bound(su.begin(), su.end(), cu,
+                            cunits_cmp<T>());
+
+  return i != su.begin() && (--i)->includes(cu);
+}
+
+template <typename T>
+bool
+includes(const sunits<T> &a, const sunits<T> &b)
+{
+  auto i = a.begin();
+
+  // Every cu of a, has to be in *this.
+  for(const auto &cu: b)
+    while(true)
+      {
+        if (i == a.end())
+          return false;
+
+        if (includes(*i, cu))
+          break;
+
+        if (cu.min() < i->min())
+          return false;
+
+        ++i;
+      }
+
+  return true;
+}
 
 template <typename T>
 std::ostream &
