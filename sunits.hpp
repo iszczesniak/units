@@ -246,6 +246,22 @@ operator >> (std::istream &in, sunits<T> &su)
 }
 
 template <typename T>
+T
+min(const sunits<T> &a)
+{
+  assert(!a.empty());
+  return a.begin()->min();
+}
+
+template <typename T>
+T
+max(const sunits<T> &a)
+{
+  assert(!a.empty());
+  return (--a.end())->max();
+}
+
+template <typename T>
 sunits<T>
 intersection(const sunits<T> &a, const sunits<T> &b)
 {

@@ -80,6 +80,20 @@ public:
 };
 
 template <typename T>
+T
+min(const sunits<T> &a)
+{
+  return a.min();
+}
+
+template <typename T>
+T
+max(const sunits<T> &a)
+{
+  return a.max();
+}
+
+template <typename T>
 bool
 includes(const cunits<T> &a, const cunits<T> &b)
 {
