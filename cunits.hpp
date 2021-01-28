@@ -81,14 +81,14 @@ public:
 
 template <typename T>
 T
-min(const sunits<T> &a)
+min(const cunits<T> &a)
 {
   return a.min();
 }
 
 template <typename T>
 T
-max(const sunits<T> &a)
+max(const cunits<T> &a)
 {
   return a.max();
 }
