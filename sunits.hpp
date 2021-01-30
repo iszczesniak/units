@@ -34,6 +34,11 @@ public:
   {
   }
 
+  sunits(T min, T max)
+  {
+    insert(data_type(min, max));
+  }
+  
   sunits(std::initializer_list<data_type> l)
   {
     for (const auto &cu: l)
