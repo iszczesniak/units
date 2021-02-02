@@ -113,7 +113,7 @@ public:
 
     // The cunits to be removed.
     const auto rcu = *i;
-    assert(rcu.includes(cu));
+    assert(includes(rcu, cu));
     // We have to remove the CU we found.
     i = base::erase(i);
 
