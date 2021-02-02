@@ -180,7 +180,7 @@ includes(const sunits<T> &su, const cunits<T> &cu)
   auto i = std::upper_bound(su.begin(), su.end(), cu,
                             cunits_cmp<T>());
 
-  return i != su.begin() && (--i)->includes(cu);
+  return i != su.begin() && includes(*--i, cu);
 }
 
 // Returns true if b is included in a.
