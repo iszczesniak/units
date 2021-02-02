@@ -172,6 +172,7 @@ private:
   }
 };
 
+// Returns true if cu is included in su.
 template <typename T>
 bool
 includes(const sunits<T> &su, const cunits<T> &cu)
@@ -182,6 +183,7 @@ includes(const sunits<T> &su, const cunits<T> &cu)
   return i != su.begin() && (--i)->includes(cu);
 }
 
+// Returns true if b is included in a.
 template <typename T>
 bool
 includes(const sunits<T> &a, const sunits<T> &b)
