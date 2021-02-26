@@ -19,10 +19,6 @@ class cunits
   T m_max;
 
 public:
-  cunits(): m_min(0), m_max(0)
-  {
-  }
-
   cunits(T min, T max): m_min(min), m_max(max)
   {
     assert(min < max);
