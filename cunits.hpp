@@ -2,6 +2,7 @@
 #define CUNITS_HPP
 
 #include <cassert>
+#include <compare>
 #include <iostream>
 #include <list>
 
@@ -53,23 +54,9 @@ public:
     return !empty();
   }
 
-  bool
-  operator < (const cunits &a) const
-  {
-    return m_min != a.m_min ? m_min < a.m_min : m_max < a.m_max;
-  }
-
-  bool
-  operator == (const cunits &a) const
-  {
-    return m_min == a.m_min && m_max == a.m_max;
-  }
-
-  bool
-  operator != (const cunits &a) const
-  {
-    return !(*this == a);
-  }
+  // We establish strong ordering with the default <=> operator.
+  std::strong_ordering
+  operator <=> (const cunits &a) const = default;
 
   friend bool
   includes<>(const cunits &, const cunits &);
