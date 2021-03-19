@@ -1,4 +1,4 @@
-TESTS = cunits
+TESTS = cunits sunits
 
 #CXXFLAGS = -g -Wno-deprecated
 CXXFLAGS = -O3 -Wno-deprecated

@@ -62,12 +62,6 @@ public:
     return count;
   }
 
-  bool
-  operator < (const sunits &a) const
-  {
-    return static_cast<base>(*this) < static_cast<base>(a);
-  }
-
   // Insert a CU.
   void
   insert(const data_type &cu)
@@ -137,6 +131,31 @@ public:
     base::erase(std::remove_if(begin(), end(),
                                [ncu](const cunits<T> &cu)
                                {return cu.count() < ncu;}), end());
+  }
+
+  // Convert the relative index to the absolute index.
+  //
+  // The relative index is the index of the available units, e.g., if
+  // the sunit has cunit(100, 101), and cunit(200, 201), then 0 is
+  // relative index of unit 100, and 1 of unit 200.
+  T
+  r2a(T i)
+  {
+    assert(i < count());
+    for(const auto &cu: *this)
+      if (i < cu.count())
+        return cu.min() + i;
+      else
+        i -= cu.count();
+
+    // We should never get here.
+    assert(false);
+  }
+  
+  bool
+  operator < (const sunits &a) const
+  {
+    return static_cast<base>(*this) < static_cast<base>(a);
   }
 
   bool
