@@ -11,34 +11,27 @@
 #include <numeric>
 #include <vector>
 
-template <typename T>
-struct cunits_cmp
-{
-  bool
-  operator()(const cunits<T> &a, const cunits<T> &b)
-  {
-    return a.max() <= b.min();
-  }
-};
-
 // The set of units.
 template <typename T>
 class sunits: private std::vector<cunits<T>>
 {
   using data_type = cunits<T>;
-  using data_type_cmp = cunits_cmp<T>;
   using base = std::vector<data_type>;
+
+  struct data_type_cmp
+  {
+    bool
+    operator()(const data_type &a, const data_type &b)
+    {
+      return a.max() <= b.min();
+    }
+  };
 
 public:
   sunits()
   {
   }
 
-  sunits(T min, T max)
-  {
-    insert(data_type(min, max));
-  }
-  
   sunits(std::initializer_list<data_type> l)
   {
     for (const auto &cu: l)
@@ -60,6 +53,12 @@ public:
       count += cu.count();
 
     return count;
+  }
+
+  bool
+  operator < (const sunits &a) const
+  {
+    return static_cast<base>(*this) < static_cast<base>(a);
   }
 
   // Insert a CU.
@@ -107,7 +106,7 @@ public:
 
     // The cunits to be removed.
     const auto rcu = *i;
-    assert(includes(rcu, cu));
+    assert(rcu.includes(cu));
     // We have to remove the CU we found.
     i = base::erase(i);
 
@@ -133,29 +132,35 @@ public:
                                {return cu.count() < ncu;}), end());
   }
 
-  // Convert the relative index to the absolute index.
-  //
-  // The relative index is the index of the available units, e.g., if
-  // the sunit has cunit(100, 101), and cunit(200, 201), then 0 is
-  // relative index of unit 100, and 1 of unit 200.
-  T
-  r2a(T i)
-  {
-    assert(i < count());
-    for(const auto &cu: *this)
-      if (i < cu.count())
-        return cu.min() + i;
-      else
-        i -= cu.count();
-
-    // We should never get here.
-    assert(false);
-  }
-  
   bool
-  operator < (const sunits &a) const
+  includes(const data_type &cu) const
   {
-    return static_cast<base>(*this) < static_cast<base>(a);
+    auto i = std::upper_bound(begin(), end(), cu, data_type_cmp());
+    return i != begin() && (--i)->includes(cu);
+  }
+
+  bool
+  includes(const sunits &a) const
+  {
+    auto i = begin();
+
+    // Every cu of a, has to be in *this.
+    for(const auto &cu: a)
+      while(true)
+        {
+          if (i == end())
+            return false;
+
+          if (i->includes(cu))
+            break;
+
+          if (cu.min() < i->min())
+            return false;
+
+          ++i;
+        }
+
+    return true;
   }
 
   bool
@@ -190,43 +195,6 @@ private:
     return true;
   }
 };
-
-// Returns true if cu is included in su.
-template <typename T>
-bool
-includes(const sunits<T> &su, const cunits<T> &cu)
-{
-  auto i = std::upper_bound(su.begin(), su.end(), cu,
-                            cunits_cmp<T>());
-
-  return i != su.begin() && includes(*--i, cu);
-}
-
-// Returns true if b is included in a.
-template <typename T>
-bool
-includes(const sunits<T> &a, const sunits<T> &b)
-{
-  auto i = a.begin();
-
-  // Every cu of a, has to be in *this.
-  for(const auto &cu: b)
-    while(true)
-      {
-        if (i == a.end())
-          return false;
-
-        if (includes(*i, cu))
-          break;
-
-        if (cu.min() < i->min())
-          return false;
-
-        ++i;
-      }
-
-  return true;
-}
 
 template <typename T>
 std::ostream &
@@ -272,22 +240,6 @@ operator >> (std::istream &in, sunits<T> &su)
 }
 
 template <typename T>
-T
-min(const sunits<T> &a)
-{
-  assert(!a.empty());
-  return a.begin()->min();
-}
-
-template <typename T>
-T
-max(const sunits<T> &a)
-{
-  assert(!a.empty());
-  return (--a.end())->max();
-}
-
-template <typename T>
 sunits<T>
 intersection(const sunits<T> &a, const sunits<T> &b)
 {
@@ -317,13 +269,6 @@ intersection(const sunits<T> &a, const sunits<T> &b)
     }
 
   return ret;
-}
-
-template <typename T>
-sunits<T>
-intersection(const sunits<T> &a, const cunits<T> &b)
-{
-  return intersection(a, sunits<T>{b});
 }
 
 template <typename T>
