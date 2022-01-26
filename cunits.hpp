@@ -53,6 +53,8 @@ public:
     return !empty();
   }
 
+  // This operator establishes an order needed for sorting that is
+  // needed in, for example, in sorted containers.
   bool
   operator < (const cunits &a) const
   {
