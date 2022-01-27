@@ -54,7 +54,7 @@ public:
   }
 
   // This operator establishes an order needed for sorting that is
-  // needed in, for example, in sorted containers.
+  // needed in, for example, sorted containers.
   bool
   operator < (const cunits &a) const
   {
