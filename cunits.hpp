@@ -54,11 +54,21 @@ public:
   }
 
   // This operator establishes an order needed for sorting that is
-  // needed in, for example, sorted containers.
+  // needed in, for example, sorted containers.  This relation is
+  // transitive.
+  //
+  // We have to assure that if "this" includes properly a, then:
+  //
+  // *this < a
+  //
+  // If an interval is not properly included in another interval, then
+  // these intervals are incomparable according to the inclusion
+  // property.
+
   bool
   operator < (const cunits &a) const
   {
-    return m_min != a.m_min ? m_min < a.m_min : m_max < a.m_max;
+    return (m_min < a.m_min || m_min == a.m_min && m_max > a.m_max);
   }
 
   bool
@@ -73,6 +83,7 @@ public:
     return !(*this == a);
   }
 
+  
   bool
   includes(const cunits &a) const
   {
