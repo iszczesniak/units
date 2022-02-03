@@ -3,23 +3,25 @@
 void
 test1()
 {
-  CU cu13(1, 4);
-  CU cu24(2, 5);
-  CU cu23(2, 4);
-  CU cu14(1, 5);
-  CU cu12(1, 3);
+  // *****************************************************************
+  // min(i) < min(j)
+  // *****************************************************************
 
-  assert(cu13 < cu24);
-  assert(cu13 < cu23);
-  assert(cu14 < cu23);
-
-  assert(cu12 < cu13);
-  assert(!(cu12 < cu12));
-  assert(!(cu13 < cu12));
-
-  assert(!(cu23 < cu14));
-  assert(!(cu23 < cu13));
-  assert(!(cu24 < cu13));
+  // max(i) < max(j)
+  {
+    // units: 012345
+    // i:     ***
+    // j1:     ***
+    // j2:      **
+    // j3:       **
+    CU i(0, 3);
+    CU j1(1, 4);
+    CU j2(2, 4);
+    CU j3(3, 5);
+    assert(i < j1);
+    assert(i < j2);
+    assert(i < j3);
+  }
 }
 
 int
