@@ -11,8 +11,8 @@
 template <typename T>
 class cunits
 {
-  T m_min;
-  T m_max;
+  // lower and upper endpoints
+  T m_min, m_max;
 
 public:
   cunits(): m_min(0), m_max(0)
@@ -58,22 +58,22 @@ public:
   // because it does not induce strick weak ordering as the
   // incomparability of intervals is not transitive.
   //
-  // We have to assure that if "this" includes properly a, then:
-  //
-  // *this < a
+  // We have to assure that if i properly includes j, then i < j.
   //
   // If an interval is not properly included in another interval, then
   // these intervals are incomparable according to the inclusion
-  // relation.  In this case we need to establish ordering between the
-  // intervals, and we do this by comparing the mins of the intervals.
+  // relation.  We need to establish strict weak ordering between the
+  // incomparable intervals, and we do this by comparing the lower
+  // endpoints of the intervals.
   //
   // These are the possibilities of comparing i < j:
   //
   // 1. If min(i) < min(j): always i < j, regardless of:
   //
   //   a. max(i) < max(j): i and j are incomparable, but we say i < j
-  //                       because we need to establish a weak strong
-  //                       ordering
+  //                       because we need to establish a weak strict
+  //                       ordering, and the ordering between
+  //                       incomparable labels can be arbitrary
   //
   //   b. max(i) == max(j): i < j because i properly includes j
   //
