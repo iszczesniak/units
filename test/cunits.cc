@@ -1,33 +1,7 @@
 #include "units.hpp"
 
-// Here we exhaustively test the < operator.  These are the
-// possibilities of comparing i < j:
-//
-// 1. If min(i) < min(j): always i < j, regardless of:
-//
-//   a. max(i) < max(j): i and j are incomparable, but we say i < j
-//                       because we need to establish a weak strong
-//                       ordering
-//
-//   b. max(i) == max(j): i < j because i properly includes j
-//
-//   c. max(i) > max(j): i < j because i properly includes j
-//
-// 2. If min(i) == min(j), and:
-//
-//   a. max(i) < max(j): j properly includes i, and so j < i
-//
-//   b. max(i) == max(j): i == j
-//
-//   c. max(i) > max(j): same as 2a, just swap i and j
-//
-// 3. If min(i) > min(j), and:
-//
-//   a. max(i) < max(j): same as 1c, just swap i and j
-//
-//   b. max(i) == max(j): same as 1b, just swap i and j
-//
-//   c. max(i) > max(j): same as 1a, just swap i and j
+// Test exhaustively the < operator with all possible combinations, as
+// detailed in the implementation in the header file.
 
 // *****************************************************************
 // 1. min(i) < min(j)

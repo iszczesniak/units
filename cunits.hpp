@@ -53,9 +53,10 @@ public:
     return !empty();
   }
 
-  // This operator establishes an order needed for sorting that is
-  // needed in, for example, sorted containers.  This relation is
-  // transitive.
+  // This operator establishes strict weak ordering needed for sorting
+  // in, e.g., containers.  We cannot use the inclusion relation,
+  // because it does not induce strick weak ordering as the
+  // incomparability of intervals is not transitive.
   //
   // We have to assure that if "this" includes properly a, then:
   //
@@ -63,8 +64,39 @@ public:
   //
   // If an interval is not properly included in another interval, then
   // these intervals are incomparable according to the inclusion
-  // property.
-
+  // relation.  In this case we need to establish ordering between the
+  // intervals, and we do this by comparing the mins of the intervals.
+  //
+  // These are the possibilities of comparing i < j:
+  //
+  // 1. If min(i) < min(j): always i < j, regardless of:
+  //
+  //   a. max(i) < max(j): i and j are incomparable, but we say i < j
+  //                       because we need to establish a weak strong
+  //                       ordering
+  //
+  //   b. max(i) == max(j): i < j because i properly includes j
+  //
+  //   c. max(i) > max(j): i < j because i properly includes j
+  //
+  // 2. If min(i) == min(j), and:
+  //
+  //   a. max(i) < max(j): j properly includes i, and so j < i
+  //
+  //   b. max(i) == max(j): i == j, and so !(i < j)
+  //
+  //   c. max(i) > max(j): j < i, same as 2a, just swap i and j
+  //
+  // 3. If min(i) > min(j), and:
+  //
+  //   a. max(i) < max(j): same as 1c, just swap i and j
+  //
+  //   b. max(i) == max(j): same as 1b, just swap i and j
+  //
+  //   c. max(i) > max(j): same as 1a, just swap i and j
+  //
+  // This relation is transitive.
+  
   bool
   operator < (const cunits &a) const
   {
@@ -83,7 +115,6 @@ public:
     return !(*this == a);
   }
 
-  
   bool
   includes(const cunits &a) const
   {
