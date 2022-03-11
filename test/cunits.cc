@@ -1,5 +1,9 @@
 #include "units.hpp"
 
+#include <list>
+
+using namespace std;
+
 // Test exhaustively the < operator with all possible combinations, as
 // detailed in the implementation in the header file.
 
@@ -71,6 +75,7 @@ test_min_eq()
     // j:     **
     CU i(0, 1);
     CU j(0, 2);
+    // i > j, but we have to use <, and so j < i
     assert(j < i);
 
     // Asymmetry
@@ -87,6 +92,41 @@ test_min_eq()
     // Asymmetry
     assert(!(i < i));
   }
+
+  // c. max(i) == max(j)
+  // The reverse of point a.
+}
+
+// Returns a list of four CUs that are worse than the argument.
+list<CU>
+worse(const CU &ri)
+{
+  list<CU> l;
+
+  // For case 1.a.
+  l.push_back(CU(ri.min() + 1, ri.max() + 1));
+  // For case 1.b.
+  l.push_back(CU(ri.min() + 1, ri.max()));
+  // For case 1.c.
+  l.push_back(CU(ri.min() + 1, ri.max() - 1));
+  // For case 2.c.
+  l.push_back(CU(ri.min(), ri.max() - 1));
+
+  return l;
+}
+
+void
+test_transitivity()
+{
+  // This CU could be any.
+  CU ri(10, 20);
+
+  for(const auto &rj: worse(ri))
+    for(const auto &rk: worse(rj))
+      {
+        assert(ri < rj && rj < rk);
+        assert(ri < rk);
+      }
 }
 
 int
@@ -94,4 +134,5 @@ main()
 {
   test_min_lt();
   test_min_eq();
+  test_transitivity();
 }
