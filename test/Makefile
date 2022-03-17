@@ -3,7 +3,7 @@ TESTS = cunits sunits
 #CXXFLAGS = -g -Wno-deprecated
 CXXFLAGS = -O3 -Wno-deprecated
 
-CXXFLAGS := -std=c++2a -I ../
+CXXFLAGS := -std=c++20 -I ../
 
 # Run the tests.
 run: $(TESTS)

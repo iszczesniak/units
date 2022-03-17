@@ -45,14 +45,14 @@ public:
   using base::const_iterator;
 
   T
-  count() const
+  size() const
   {
-    T count = 0;
+    T size = 0;
 
     for(auto const &cu: *this)
-      count += cu.count();
+      size += cu.size();
 
-    return count;
+    return size;
   }
 
   bool

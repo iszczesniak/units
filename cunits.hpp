@@ -37,7 +37,7 @@ public:
   }
 
   T
-  count() const
+  size() const
   {
     return m_max - m_min;
   }
@@ -45,7 +45,7 @@ public:
   bool
   empty() const
   {
-    return !count();
+    return !size();
   }
 
   operator bool() const
@@ -96,7 +96,11 @@ public:
   //   c. max(i) > max(j): same as 1a, just swap i and j
   //
   // This relation is transitive.
-  
+  //
+  // This relation does not induce the lexicographic ordering.  It
+  // would, had we compared the upper endpoints with <, but then i < j
+  // would not hold (while it should) when i includes j.
+
   bool
   operator < (const cunits &a) const
   {
@@ -114,13 +118,14 @@ public:
   {
     return !(*this == a);
   }
-
-  bool
-  includes(const cunits &a) const
-  {
-    return m_min <= a.m_min && a.m_max <= m_max;
-  }
 };
+
+template<typename T>
+bool
+includes(const cunits<T> &i, const cunits<T> &j)
+{
+  return i.min() <= j.min() && j.max() <= i.max();
+}
 
 template <typename T>
 std::ostream &
@@ -171,11 +176,11 @@ operator >> (std::istream &in, cunits<T> &cu)
 
 template <typename T>
 auto
-get_candidate_slots(const cunits<T> &cu, int ncu)
+get_candidate_intervals(const cunits<T> &cu, int ncu)
 {
   std::list<cunits<T>> result;
 
-  if (ncu <= cu.count())
+  if (ncu <= cu.size())
     for(auto m = cu.min(); m <= cu.max() - ncu; ++m)
       result.push_back(cunits<T>(m, m + ncu));
 
