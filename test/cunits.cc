@@ -160,8 +160,8 @@ test_relations()
     assert(ri <= rj);
     assert(!(ri > rj));
     assert(!(ri >= rj));
-    // assert(ri != rj);
-    // assert(!(ri == rj));
+    assert(ri != rj);
+    assert(!(ri == rj));
   }
   // Row 1, column 2.
   {
@@ -170,8 +170,8 @@ test_relations()
     assert(ri <= rj);
     assert(!(ri > rj));
     assert(!(ri >= rj));
-    // assert(ri != rj);
-    // assert(!(ri == rj));
+    assert(ri != rj);
+    assert(!(ri == rj));
   }
   // Row 1, column 3.
   {
@@ -180,8 +180,8 @@ test_relations()
     assert(ri <= rj);
     assert(!(ri > rj));
     assert(!(ri >= rj));
-    // assert(ri != rj);
-    // assert(!(ri == rj));
+    assert(ri != rj);
+    assert(!(ri == rj));
   }
 
   // -----------------------------------------------------------------
@@ -192,8 +192,8 @@ test_relations()
     assert(ri >= rj);
     assert(!(ri < rj));
     assert(!(ri <= rj));
-    // assert(ri != rj);
-    // assert(!(ri == rj));
+    assert(ri != rj);
+    assert(!(ri == rj));
   }
   // Row 2, column 2.
   {
@@ -212,8 +212,8 @@ test_relations()
     assert(ri <= rj);
     assert(!(ri > rj));
     assert(!(ri >= rj));
-    // assert(ri != rj);
-    // assert(!(ri == rj));
+    assert(ri != rj);
+    assert(!(ri == rj));
   }
 
   // -----------------------------------------------------------------
@@ -224,8 +224,8 @@ test_relations()
     assert(ri >= rj);
     assert(!(ri < rj));
     assert(!(ri <= rj));
-    // assert(ri != rj);
-    // assert(!(ri == rj));
+    assert(ri != rj);
+    assert(!(ri == rj));
   }
   // Row 3, column 2.
   {
@@ -234,8 +234,8 @@ test_relations()
     assert(ri >= rj);
     assert(!(ri < rj));
     assert(!(ri <= rj));
-    // assert(ri != rj);
-    // assert(!(ri == rj));
+    assert(ri != rj);
+    assert(!(ri == rj));
   }
   // Row 3, column 3.
   {
@@ -244,8 +244,8 @@ test_relations()
     assert(ri >= rj);
     assert(!(ri < rj));
     assert(!(ri <= rj));
-    // assert(ri != rj);
-    // assert(!(ri == rj));
+    assert(ri != rj);
+    assert(!(ri == rj));
   }
 }
 

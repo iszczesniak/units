@@ -53,6 +53,12 @@ public:
   {
     return !empty();
   }
+
+  // bool
+  // operator == (const cunits &a)
+  // {
+  //   return m_min == a.m_min && m_max == a.m_max;
+  // }
 };
 
 // This operator establishes strict weak ordering needed for sorting
