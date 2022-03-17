@@ -106,6 +106,14 @@ public:
   {
     return (m_min < a.m_min || m_min == a.m_min && m_max > a.m_max);
   }
+
+  // The default implementation works different than expected, so we
+  // provide our implementation.
+  bool
+  operator > (const cunits &a) const
+  {
+    return (m_min > a.m_min || m_min == a.m_min && m_max < a.m_max);
+  }
 };
 
 template<typename T>
