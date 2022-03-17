@@ -30,9 +30,9 @@ test_min_lt()
     assert(i < j3);
 
     // Asymmetry
-    assert(!(j1 < i));
-    assert(!(j2 < i));
-    assert(!(j3 < i));
+    assert(!(i > j1));
+    assert(!(i > j2));
+    assert(!(i > j3));
   }
 
   // b. max(i) == max(j)
@@ -45,7 +45,7 @@ test_min_lt()
     assert(i < j);
 
     // Asymmetry
-    assert(!(j < i));
+    assert(!(i > i));
   }
 
   // c. max(i) > max(j)
@@ -58,7 +58,7 @@ test_min_lt()
     assert(i < j);
 
     // Asymmetry
-    assert(!(j < i));
+    assert(!(i > j));
   }
 }
 
@@ -75,8 +75,7 @@ test_min_eq()
     // j:     **
     CU i(0, 1);
     CU j(0, 2);
-    // i > j, but we have to use <, and so j < i
-    assert(j < i);
+    assert(i > j);
 
     // Asymmetry
     assert(!(i < j));
@@ -126,6 +125,18 @@ test_transitivity()
       {
         assert(ri < rj && rj < rk);
         assert(ri < rk);
+
+        // Test the default implementation of >.
+        assert(rk > rj && rj > ri);
+        assert(rk > ri);
+
+        // Test the default implementation of <=.
+        assert(ri <= rj && rj <= rk);
+        assert(ri <= rk);
+
+        // Test the default implementation of >=.
+        assert(rk >= rj && rj >= ri);
+        assert(rk >= ri);
       }
 }
 
