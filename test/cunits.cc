@@ -157,16 +157,31 @@ test_relations()
   {
     CU rj(ri.min() + 1, ri.max() + 1);
     assert(ri < rj);
+    assert(ri <= rj);
+    assert(!(ri > rj));
+    assert(!(ri >= rj));
+    // assert(ri != rj);
+    // assert(!(ri == rj));
   }
   // Row 1, column 2.
   {
     CU rj(ri.min() + 1, ri.max());
     assert(ri < rj);
+    assert(ri <= rj);
+    assert(!(ri > rj));
+    assert(!(ri >= rj));
+    // assert(ri != rj);
+    // assert(!(ri == rj));
   }
   // Row 1, column 3.
   {
     CU rj(ri.min() + 1, ri.max() - 1);
     assert(ri < rj);
+    assert(ri <= rj);
+    assert(!(ri > rj));
+    assert(!(ri >= rj));
+    // assert(ri != rj);
+    // assert(!(ri == rj));
   }
 
   // -----------------------------------------------------------------
@@ -174,16 +189,31 @@ test_relations()
   {
     CU rj(ri.min(), ri.max() + 1);
     assert(ri > rj);
+    assert(ri >= rj);
+    assert(!(ri < rj));
+    assert(!(ri <= rj));
+    // assert(ri != rj);
+    // assert(!(ri == rj));
   }
   // Row 2, column 2.
   {
     CU rj(ri.min(), ri.max());
     assert(ri == rj);
+    assert(!(ri != rj));
+    assert(!(ri < rj));
+    assert(ri <= rj);
+    assert(!(ri > rj));
+    assert(ri >= rj);
   }
   // Row 2, column 3.
   {
     CU rj(ri.min(), ri.max() - 1);
     assert(ri < rj);
+    assert(ri <= rj);
+    assert(!(ri > rj));
+    assert(!(ri >= rj));
+    // assert(ri != rj);
+    // assert(!(ri == rj));
   }
 
   // -----------------------------------------------------------------
@@ -191,16 +221,31 @@ test_relations()
   {
     CU rj(ri.min() - 1, ri.max() + 1);
     assert(ri > rj);
+    assert(ri >= rj);
+    assert(!(ri < rj));
+    assert(!(ri <= rj));
+    // assert(ri != rj);
+    // assert(!(ri == rj));
   }
   // Row 3, column 2.
   {
     CU rj(ri.min() - 1, ri.max());
     assert(ri > rj);
+    assert(ri >= rj);
+    assert(!(ri < rj));
+    assert(!(ri <= rj));
+    // assert(ri != rj);
+    // assert(!(ri == rj));
   }
   // Row 3, column 3.
   {
     CU rj(ri.min() - 1, ri.max() - 1);
     assert(ri > rj);
+    assert(ri >= rj);
+    assert(!(ri < rj));
+    assert(!(ri <= rj));
+    // assert(ri != rj);
+    // assert(!(ri == rj));
   }
 }
 
