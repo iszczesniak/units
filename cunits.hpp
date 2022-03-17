@@ -106,18 +106,6 @@ public:
   {
     return (m_min < a.m_min || m_min == a.m_min && m_max > a.m_max);
   }
-
-  bool
-  operator == (const cunits &a) const
-  {
-    return m_min == a.m_min && m_max == a.m_max;
-  }
-
-  bool
-  operator != (const cunits &a) const
-  {
-    return !(*this == a);
-  }
 };
 
 template<typename T>
