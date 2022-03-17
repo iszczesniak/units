@@ -2,6 +2,7 @@
 #define CUNITS_HPP
 
 #include <cassert>
+#include <compare>
 #include <iostream>
 #include <list>
 
@@ -100,19 +101,28 @@ public:
   // This relation does not induce the lexicographic ordering.  It
   // would, had we compared the upper endpoints with <, but then i < j
   // would not hold (while it should) when i includes j.
+  //
+  // i < j if:
+  //
+  //   i.m_min < j.m_min || i.m_min == j.m_min && i.m_max > j.m_max
+  //
+  // i > j if:
+  //
+  //   i.m_min > j.m_min || i.m_min == j.m_min && i.m_max < j.m_max
 
-  bool
-  operator < (const cunits &a) const
+  constexpr std::strong_ordering
+  operator <=> (const cunits &a) const
   {
-    return (m_min < a.m_min || m_min == a.m_min && m_max > a.m_max);
-  }
+    if (m_min < a.m_min)
+      return std::strong_ordering::less;
+    if (m_min > a.m_min)
+      return std::strong_ordering::greater;
+    if (m_max > a.m_max)
+      return std::strong_ordering::less;
+    if (m_max < a.m_max)
+      return std::strong_ordering::greater;
 
-  // The default implementation works different than expected, so we
-  // provide our implementation.
-  bool
-  operator > (const cunits &a) const
-  {
-    return (m_min > a.m_min || m_min == a.m_min && m_max < a.m_max);
+    return std::strong_ordering::equal;
   }
 };
 
