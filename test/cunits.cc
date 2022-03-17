@@ -114,6 +114,9 @@ worse(const CU &ri)
   return l;
 }
 
+// *****************************************************************
+// transitivity
+// *****************************************************************
 void
 test_transitivity()
 {
@@ -140,10 +143,72 @@ test_transitivity()
       }
 }
 
+// *****************************************************************
+// Test all relations
+// *****************************************************************
+
+void
+test_relations()
+{
+  CU ri(10, 20);
+
+  // -----------------------------------------------------------------
+  // Row 1, column 1.
+  {
+    CU rj(ri.min() + 1, ri.max() + 1);
+    assert(ri < rj);
+  }
+  // Row 1, column 2.
+  {
+    CU rj(ri.min() + 1, ri.max());
+    assert(ri < rj);
+  }
+  // Row 1, column 3.
+  {
+    CU rj(ri.min() + 1, ri.max() - 1);
+    assert(ri < rj);
+  }
+
+  // -----------------------------------------------------------------
+  // Row 2, column 1.
+  {
+    CU rj(ri.min(), ri.max() + 1);
+    assert(ri > rj);
+  }
+  // Row 2, column 2.
+  {
+    CU rj(ri.min(), ri.max());
+    assert(ri == rj);
+  }
+  // Row 2, column 3.
+  {
+    CU rj(ri.min(), ri.max() - 1);
+    assert(ri < rj);
+  }
+
+  // -----------------------------------------------------------------
+  // Row 3, column 1.
+  {
+    CU rj(ri.min() - 1, ri.max() + 1);
+    assert(ri > rj);
+  }
+  // Row 3, column 2.
+  {
+    CU rj(ri.min() - 1, ri.max());
+    assert(ri > rj);
+  }
+  // Row 3, column 3.
+  {
+    CU rj(ri.min() - 1, ri.max() - 1);
+    assert(ri > rj);
+  }
+}
+
 int
 main()
 {
   test_min_lt();
   test_min_eq();
   test_transitivity();
+  test_relations();
 }
