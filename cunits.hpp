@@ -49,16 +49,7 @@ public:
     return !size();
   }
 
-  operator bool() const
-  {
-    return !empty();
-  }
-
-  // bool
-  // operator == (const cunits &a)
-  // {
-  //   return m_min == a.m_min && m_max == a.m_max;
-  // }
+  bool operator == (const cunits &) const = default;
 };
 
 // This operator establishes strict weak ordering needed for sorting
