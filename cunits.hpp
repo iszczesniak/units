@@ -9,6 +9,18 @@
 // Describes contiguous units [min, max), i.e., min is included, and
 // max is not.
 
+// Relations between resources ri and rj.
+//
+//                 ---------------------------------------------------
+//                 |                max(ri) ? max(rj)                |
+//                 ---------------------------------------------------
+//                 |        <       |       =       |        >       |
+//                 ---------------------------------------------------
+// min(i) < min(j) | i || j | i < j |       |       |        |       |
+// min(i) = min(j) |        |       |       |       |        |       |
+// min(i) > min(j) |        |       |       |       | i || j |       |
+//                 ---------------------------------------------------
+
 template <typename T>
 class cunits
 {
