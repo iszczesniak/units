@@ -9,17 +9,23 @@
 // Describes contiguous units [min, max), i.e., min is included, and
 // max is not.
 
-// Relations between resources ri and rj.
+// Relations between resources ri and rj, where:
 //
-//                 ---------------------------------------------------
-//                 |                max(ri) ? max(rj)                |
-//                 ---------------------------------------------------
-//                 |        <       |       =       |        >       |
-//                 ---------------------------------------------------
-// min(i) < min(j) | i || j | i < j |       |       |        |       |
-// min(i) = min(j) |        |       |       |       |        |       |
-// min(i) > min(j) |        |       |       |       | i || j |       |
-//                 ---------------------------------------------------
+// * || is incomparable,
+//
+// * sp is superset,
+//
+// * sb is subset.
+//
+//                 -------------------------------------------------------
+//                 | max(i) < max(j) | max(i) = max(j) | max(i) > max(j) |
+//                 -------------------------------------------------------
+// min(i) < min(j) | i || j | i < j  | i sp j | i < j  | i sp j | i < j  |
+//                 -------------------------------------------------------
+// min(i) = min(j) | i sb j | i > j  |      i = j      | i sp j | i < j  |
+//                 -------------------------------------------------------
+// min(i) > min(j) |        |        |        |        | i || j |        |
+//                 -------------------------------------------------------
 
 template <typename T>
 class cunits
