@@ -6,16 +6,16 @@
 #include <iostream>
 #include <list>
 
-// Describes contiguous units [min, max), i.e., min is included, and
-// max is not.
+// Describes a resource interval [min, max), i.e., min is included,
+// and max is not.
 
-// Relations between resources ri and rj, where:
+// Relations between resources i and j, where:
 //
 // * || is incomparable,
 //
-// * sp is superset,
+// * sp is a proper superset,
 //
-// * sb is subset.
+// * sb is a proper subset.
 //
 //                 -------------------------------------------------------
 //                 | max(i) < max(j) | max(i) = max(j) | max(i) > max(j) |
@@ -70,27 +70,19 @@ public:
   bool operator == (const cunits &) const = default;
 };
 
-// This operator establishes strict weak ordering needed for sorting
-// in, e.g., containers.  We cannot use the inclusion relation,
-// because it does not induce strick weak ordering as the
-// incomparability of intervals is not transitive.
+// The < operator establishes an ordering needed for sorting in, e.g.,
+// containers.  We need <, because we cannot use the inclusion
+// relation: the inclusion relation does not induce strick weak
+// ordering as the incomparability of intervals is intransitive.
 //
-// We have to assure that if i properly includes j, then i < j.
-//
-// If an interval is not properly included in another interval, then
-// these intervals are incomparable according to the inclusion
-// relation.  We need to establish strict weak ordering between the
-// incomparable intervals, and we do this by comparing the lower
-// endpoints of the intervals.
-//
-// These are the possibilities of comparing i < j:
+// We define i < j like this (the same as in the table at the top):
 //
 // 1. If min(i) < min(j): always i < j, regardless of:
 //
-//   a. max(i) < max(j): i and j are incomparable, but we say i < j
-//                       because we need to establish a weak strict
-//                       ordering, and the ordering between
-//                       incomparable labels can be arbitrary
+//   a. max(i) < max(j): i and j are incomparable, and so we need to
+//                       break this tie somehow; the ordering between
+//                       incomparable labels can be arbitrary, but we
+//                       say i < j;
 //
 //   b. max(i) == max(j): i < j because i properly includes j
 //
@@ -118,13 +110,15 @@ public:
 // would, had we compared the upper endpoints with <, but then i < j
 // would not hold (while it should) when i includes j.
 //
-// i < j if:
+// To wrap up:
 //
-//   i.m_min < j.m_min || i.m_min == j.m_min && i.m_max > j.m_max
+// * i < j if:
 //
-// i > j if:
+//   min(i) < min(j) || min(i) == min(j) && max(i) > max(j)
 //
-//   i.m_min > j.m_min || i.m_min == j.m_min && i.m_max < j.m_max
+// * i > j if:
+//
+//   min(i) > min(j) || min(i) == min(j) && max(i) < max(j)
 
 template<typename T>
 constexpr std::strong_ordering
