@@ -4,101 +4,56 @@
 
 using namespace std;
 
-// Test exhaustively the < operator with all possible combinations, as
-// detailed in the implementation in the header file.
-
-// *****************************************************************
-// 1. min(i) < min(j)
-// *****************************************************************
-
+// Make sure that i < j.
+template <typename T>
 void
-test_min_lt()
+test_less(const T &i, const T &j)
 {
-  // a. max(i) < max(j)
-  {
-    // units: 012345
-    // i:     ***
-    // j1:     ***
-    // j2:      **
-    // j3:       **
-    CU i(0, 3);
-    CU j1(1, 4);
-    CU j2(2, 4);
-    CU j3(3, 5);
-    assert(i < j1);
-    assert(i < j2);
-    assert(i < j3);
-
-    // Asymmetry
-    assert(!(i > j1));
-    assert(!(i > j2));
-    assert(!(i > j3));
-  }
-
-  // b. max(i) == max(j)
-  {
-    // units: 012
-    // i:     **
-    // j:      *
-    CU i(0, 2);
-    CU j(1, 2);
-    assert(i < j);
-
-    // Asymmetry
-    assert(!(i > i));
-  }
-
-  // c. max(i) > max(j)
-  {
-    // units: 0123
-    // i:     ***
-    // j:      *
-    CU i(0, 3);
-    CU j(1, 2);
-    assert(i < j);
-
-    // Asymmetry
-    assert(!(i > j));
-  }
+  assert(i < j);
+  assert(i <= j);
+  assert(i != j);
+  assert(!(i == j));
+  assert(!(i > j));
+  assert(!(i >= j));
 }
 
-// *****************************************************************
-// 2. min(i) == min(j)
-// *****************************************************************
+// Make sure that i == j.
+template <typename T>
 void
-test_min_eq()
+test_equal(const T &i, const T &j)
 {
-  // a. max(i) < max(j)
-  {
-    // units: 012
-    // i:     *
-    // j:     **
-    CU i(0, 1);
-    CU j(0, 2);
-    assert(i > j);
-
-    // Asymmetry
-    assert(!(i < j));
-  }
-
-  // b. max(i) == max(j)
-  {
-    // units: 01
-    // i:     *
-    CU i(0, 1);
-    assert(i == i);
-
-    // Asymmetry
-    assert(!(i < i));
-  }
-
-  // c. max(i) == max(j)
-  // The reverse of point a.
+  assert(i == j);
+  assert(!(i != j));
+  assert(i <= j);
+  assert(i >= j);
+  assert(!(i < j));
+  assert(!(i > j));
 }
 
-// Returns a list of four CUs that are worse than the argument.
-list<CU>
-worse(const CU &ri)
+// Make sure that i > j.
+template <typename T>
+void
+test_greater(const T &i, const T &j)
+{
+  test_less(j, i);
+}
+
+void
+test_comparable(const CU &ri, const CU &rj)
+{
+  assert(includes(ri, rj) || includes(rj, ri));
+}
+
+void
+test_incomparable(const CU &ri, const CU &rj)
+{
+  assert(!includes(ri, rj));
+  assert(!includes(rj, ri));
+}
+
+// Returns a list of rj such that: ri < rj
+auto
+greater_RIs(const CU &ri)
 {
   list<CU> l;
 
@@ -115,16 +70,86 @@ worse(const CU &ri)
 }
 
 // *****************************************************************
-// transitivity
+// Test all relations
 // *****************************************************************
+
+void
+test_relations()
+{
+  CU ri(10, 20);
+
+  // -----------------------------------------------------------------
+  // Row 1, column 1.
+  {
+    CU rj(ri.min() + 1, ri.max() + 1);
+    test_less(ri, rj);
+    test_incomparable(ri, rj);
+  }
+  // Row 1, column 2.
+  {
+    CU rj(ri.min() + 1, ri.max());
+    test_less(ri, rj);
+    test_comparable(ri, rj);
+  }
+  // Row 1, column 3.
+  {
+    CU rj(ri.min() + 1, ri.max() - 1);
+    test_less(ri, rj);
+    test_comparable(ri, rj);
+  }
+
+  // -----------------------------------------------------------------
+  // Row 2, column 1.
+  {
+    CU rj(ri.min(), ri.max() + 1);
+    test_greater(ri, rj);
+    test_comparable(ri, rj);
+  }
+  // Row 2, column 2.
+  {
+    CU rj(ri.min(), ri.max());
+    test_equal(ri, rj);
+    test_comparable(ri, rj);
+  }
+  // Row 2, column 3.
+  {
+    CU rj(ri.min(), ri.max() - 1);
+    test_less(ri, rj);
+    test_comparable(ri, rj);
+  }
+
+  // -----------------------------------------------------------------
+  // Row 3, column 1.
+  {
+    CU rj(ri.min() - 1, ri.max() + 1);
+    test_greater(ri, rj);
+    test_comparable(ri, rj);
+  }
+  // Row 3, column 2.
+  {
+    CU rj(ri.min() - 1, ri.max());
+    test_greater(ri, rj);
+    test_comparable(ri, rj);
+  }
+  // Row 3, column 3.
+  {
+    CU rj(ri.min() - 1, ri.max() - 1);
+    test_greater(ri, rj);
+    test_incomparable(ri, rj);
+  }
+}
+// *****************************************************************
+// Test transitivity.
+// *****************************************************************
+
 void
 test_transitivity()
 {
   // This CU could be any.
   CU ri(10, 20);
 
-  for(const auto &rj: worse(ri))
-    for(const auto &rk: worse(rj))
+  for(const auto &rj: greater_RIs(ri))
+    for(const auto &rk: greater_RIs(rj))
       {
         assert(ri < rj && rj < rk);
         assert(ri < rk);
@@ -143,117 +168,9 @@ test_transitivity()
       }
 }
 
-// *****************************************************************
-// Test all relations
-// *****************************************************************
-
-void
-test_relations()
-{
-  CU ri(10, 20);
-
-  // -----------------------------------------------------------------
-  // Row 1, column 1.
-  {
-    CU rj(ri.min() + 1, ri.max() + 1);
-    assert(ri < rj);
-    assert(ri <= rj);
-    assert(!(ri > rj));
-    assert(!(ri >= rj));
-    assert(ri != rj);
-    assert(!(ri == rj));
-  }
-  // Row 1, column 2.
-  {
-    CU rj(ri.min() + 1, ri.max());
-    assert(ri < rj);
-    assert(ri <= rj);
-    assert(!(ri > rj));
-    assert(!(ri >= rj));
-    assert(ri != rj);
-    assert(!(ri == rj));
-  }
-  // Row 1, column 3.
-  {
-    CU rj(ri.min() + 1, ri.max() - 1);
-    assert(ri < rj);
-    assert(ri <= rj);
-    assert(!(ri > rj));
-    assert(!(ri >= rj));
-    assert(ri != rj);
-    assert(!(ri == rj));
-  }
-
-  // -----------------------------------------------------------------
-  // Row 2, column 1.
-  {
-    CU rj(ri.min(), ri.max() + 1);
-    assert(ri > rj);
-    assert(ri >= rj);
-    assert(!(ri < rj));
-    assert(!(ri <= rj));
-    assert(ri != rj);
-    assert(!(ri == rj));
-  }
-  // Row 2, column 2.
-  {
-    CU rj(ri.min(), ri.max());
-    assert(ri == rj);
-    assert(!(ri != rj));
-    assert(!(ri < rj));
-    assert(ri <= rj);
-    assert(!(ri > rj));
-    assert(ri >= rj);
-  }
-  // Row 2, column 3.
-  {
-    CU rj(ri.min(), ri.max() - 1);
-    assert(ri < rj);
-    assert(ri <= rj);
-    assert(!(ri > rj));
-    assert(!(ri >= rj));
-    assert(ri != rj);
-    assert(!(ri == rj));
-  }
-
-  // -----------------------------------------------------------------
-  // Row 3, column 1.
-  {
-    CU rj(ri.min() - 1, ri.max() + 1);
-    assert(ri > rj);
-    assert(ri >= rj);
-    assert(!(ri < rj));
-    assert(!(ri <= rj));
-    assert(ri != rj);
-    assert(!(ri == rj));
-  }
-  // Row 3, column 2.
-  {
-    CU rj(ri.min() - 1, ri.max());
-    assert(ri > rj);
-    assert(ri >= rj);
-    assert(!(ri < rj));
-    assert(!(ri <= rj));
-    assert(ri != rj);
-    assert(!(ri == rj));
-  }
-  // Row 3, column 3.
-  {
-    CU rj(ri.min() - 1, ri.max() - 1);
-    assert(ri > rj);
-    assert(ri >= rj);
-    assert(!(ri < rj));
-    assert(!(ri <= rj));
-    assert(ri != rj);
-    assert(!(ri == rj));
-  }
-}
-
 int
 main()
 {
-  test_min_lt();
-  test_min_eq();
-  test_transitivity();
   test_relations();
+  test_transitivity();
 }
