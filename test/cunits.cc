@@ -1,54 +1,22 @@
+#include "helpers.hpp"
+
 #include "units.hpp"
 
+#include <cassert>
 #include <list>
 
 using namespace std;
 
-// Make sure that i < j.
-template <typename T>
-void
-test_less(const T &i, const T &j)
+bool
+is_comparable(const CU &ri, const CU &rj)
 {
-  assert(i < j);
-  assert(i <= j);
-  assert(i != j);
-  assert(!(i == j));
-  assert(!(i > j));
-  assert(!(i >= j));
+  return includes(ri, rj) || includes(rj, ri);
 }
 
-// Make sure that i == j.
-template <typename T>
-void
-test_equal(const T &i, const T &j)
+bool
+is_incomparable(const CU &ri, const CU &rj)
 {
-  assert(i == j);
-  assert(!(i != j));
-  assert(i <= j);
-  assert(i >= j);
-  assert(!(i < j));
-  assert(!(i > j));
-}
-
-// Make sure that i > j.
-template <typename T>
-void
-test_greater(const T &i, const T &j)
-{
-  test_less(j, i);
-}
-
-void
-test_comparable(const CU &ri, const CU &rj)
-{
-  assert(includes(ri, rj) || includes(rj, ri));
-}
-
-void
-test_incomparable(const CU &ri, const CU &rj)
-{
-  assert(!includes(ri, rj));
-  assert(!includes(rj, ri));
+  return !includes(ri, rj) && !includes(rj, ri);
 }
 
 // Returns a list of rj such that: ri < rj
@@ -70,7 +38,7 @@ greater_RIs(const CU &ri)
 }
 
 // *****************************************************************
-// Test all relations
+// Test all relations.
 // *****************************************************************
 
 void
@@ -82,62 +50,63 @@ test_relations()
   // Row 1, column 1.
   {
     CU rj(ri.min() + 1, ri.max() + 1);
-    test_less(ri, rj);
-    test_incomparable(ri, rj);
+    assert(is_less(ri, rj));
+    assert(is_incomparable(ri, rj));
   }
   // Row 1, column 2.
   {
     CU rj(ri.min() + 1, ri.max());
-    test_less(ri, rj);
-    test_comparable(ri, rj);
+    assert(is_less(ri, rj));
+    assert(is_comparable(ri, rj));
   }
   // Row 1, column 3.
   {
     CU rj(ri.min() + 1, ri.max() - 1);
-    test_less(ri, rj);
-    test_comparable(ri, rj);
+    assert(is_less(ri, rj));
+    assert(is_comparable(ri, rj));
   }
 
   // -----------------------------------------------------------------
   // Row 2, column 1.
   {
     CU rj(ri.min(), ri.max() + 1);
-    test_greater(ri, rj);
-    test_comparable(ri, rj);
+    assert(is_greater(ri, rj));
+    assert(is_comparable(ri, rj));
   }
   // Row 2, column 2.
   {
     CU rj(ri.min(), ri.max());
-    test_equal(ri, rj);
-    test_comparable(ri, rj);
+    assert(is_equal(ri, rj));
+    assert(is_comparable(ri, rj));
   }
   // Row 2, column 3.
   {
     CU rj(ri.min(), ri.max() - 1);
-    test_less(ri, rj);
-    test_comparable(ri, rj);
+    assert(is_less(ri, rj));
+    assert(is_comparable(ri, rj));
   }
 
   // -----------------------------------------------------------------
   // Row 3, column 1.
   {
     CU rj(ri.min() - 1, ri.max() + 1);
-    test_greater(ri, rj);
-    test_comparable(ri, rj);
+    assert(is_greater(ri, rj));
+    assert(is_comparable(ri, rj));
   }
   // Row 3, column 2.
   {
     CU rj(ri.min() - 1, ri.max());
-    test_greater(ri, rj);
-    test_comparable(ri, rj);
+    assert(is_greater(ri, rj));
+    assert(is_comparable(ri, rj));
   }
   // Row 3, column 3.
   {
     CU rj(ri.min() - 1, ri.max() - 1);
-    test_greater(ri, rj);
-    test_incomparable(ri, rj);
+    assert(is_greater(ri, rj));
+    assert(is_incomparable(ri, rj));
   }
 }
+
 // *****************************************************************
 // Test transitivity.
 // *****************************************************************
