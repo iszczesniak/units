@@ -106,9 +106,9 @@ public:
 //
 // Ordering < is transitive.
 //
-// This relation does not induce the lexicographic ordering.  It
-// would, had we compared the upper endpoints with <, but then i < j
-// would not hold (while it should) when i includes j.
+// This relation is not a lexicographic ordering.  It would, had we
+// compared the upper endpoints with <, but then i < j would not hold
+// (while it should) when i includes j.
 //
 // To wrap up:
 //
@@ -119,6 +119,8 @@ public:
 // * i > j if:
 //
 //   min(i) > min(j) || min(i) == min(j) && max(i) < max(j)
+//
+// * i == j otherwise.
 
 template<typename T>
 constexpr std::strong_ordering
