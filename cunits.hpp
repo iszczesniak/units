@@ -123,7 +123,7 @@ public:
 // * i == j otherwise.
 
 template<typename T>
-constexpr std::strong_ordering
+constexpr auto
 operator <=> (const cunits<T> &i, const cunits<T> &j)
 {
   if (i.min() < j.min())
