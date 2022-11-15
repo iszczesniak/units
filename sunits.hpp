@@ -272,6 +272,13 @@ intersection(const sunits<T> &a, const sunits<T> &b)
 }
 
 template <typename T>
+sunits<T>
+intersection(const cunits<T> &a, const sunits<T> &b)
+{
+  return intersection(sunits<T>{a}, b);
+}
+
+template <typename T>
 auto
 get_candidate_slots(const sunits<T> &su, int ncu)
 {
