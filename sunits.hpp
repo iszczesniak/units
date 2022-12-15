@@ -16,7 +16,8 @@ template <typename T>
 class sunits: private std::vector<cunits<T>>
 {
   using data_type = cunits<T>;
-  using base = std::vector<data_type>;
+  using base_type = std::vector<data_type>;
+  using size_type = T;
 
   struct data_type_cmp
   {
@@ -38,27 +39,24 @@ public:
       insert(cu);
   }
 
-  using base::begin;
-  using base::end;
-  using base::size;
-  using base::empty;
-  using base::const_iterator;
-
-  T
-  size() const
-  {
-    T size = 0;
-
-    for(auto const &cu: *this)
-      size += cu.size();
-
-    return size;
-  }
+  using base_type::begin;
+  using base_type::end;
+  using base_type::size;
+  using base_type::empty;
+  using base_type::const_iterator;
 
   bool
   operator < (const sunits &a) const
   {
-    return static_cast<base>(*this) < static_cast<base>(a);
+    return static_cast<base_type>(*this) < static_cast<base_type>(a);
+  }
+
+  auto
+  size() const
+  {
+    return std::accumulate(begin(), end(), 0,
+                           [](const auto &cu)
+                           {return cu.size();});
   }
 
   // Insert a CU.
@@ -86,9 +84,9 @@ public:
         ++j;
       }
 
-    j = base::erase(i, j);
+    j = base_type::erase(i, j);
     data_type icu(min, max);
-    auto pos = base::insert(j, icu);
+    auto pos = base_type::insert(j, icu);
     // Make sure the insertion was successfull.
     assert(*pos == icu);
 
@@ -108,28 +106,29 @@ public:
     const auto rcu = *i;
     assert(rcu.includes(cu));
     // We have to remove the CU we found.
-    i = base::erase(i);
+    i = base_type::erase(i);
 
     // If there were some units on the right in the removed CU, we
     // have to add them.
     if (cu.max() < rcu.max())
-      i = base::insert(i, data_type(cu.max(), rcu.max()));
+      i = base_type::insert(i, data_type(cu.max(), rcu.max()));
 
     // If there were some units on the left in the removed CU, we have
     // to add them.
     if (rcu.min() < cu.min())
-      base::insert(i, data_type(rcu.min(), cu.min()));
+      base_type::insert(i, data_type(rcu.min(), cu.min()));
 
     assert(verify());
   }
 
   // Remove those cunits with less than ncu units.
   void
-  remove(T ncu)
+  remove(size_type ncu)
   {
-    base::erase(std::remove_if(begin(), end(),
-                               [ncu](const cunits<T> &cu)
-                               {return cu.count() < ncu;}), end());
+    base_type::erase(std::remove_if(begin(), end(),
+                                    [ncu](const auto &cu)
+                                    {return cu.size() < ncu;}),
+                     end());
   }
 
   bool
