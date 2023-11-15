@@ -45,11 +45,10 @@ public:
   using base_type::empty;
   using base_type::const_iterator;
 
-  bool
-  operator < (const sunits &a) const
-  {
-    return static_cast<base_type>(*this) < static_cast<base_type>(a);
-  }
+  // We delegate <=> to base_type.  We do not want the default
+  // implementation of <=> (i.e., lexicographic comparison), because
+  // m_edge should not take part.
+  constexpr auto operator <=> (const sunits &l) const = default;
 
   auto
   size() const
@@ -139,30 +138,6 @@ public:
   }
 
   bool
-  includes(const sunits &a) const
-  {
-    auto i = begin();
-
-    // Every cu of a, has to be in *this.
-    for(const auto &cu: a)
-      while(true)
-        {
-          if (i == end())
-            return false;
-
-          if (i->includes(cu))
-            break;
-
-          if (cu.min() < i->min())
-            return false;
-
-          ++i;
-        }
-
-    return true;
-  }
-
-  bool
   operator == (const sunits &a) const
   {
     if (size() != a.size())
@@ -236,6 +211,31 @@ operator >> (std::istream &in, sunits<T> &su)
     }
 
   return in;
+}
+
+template <typename T>
+bool
+includes(const sunits<T> &a, const sunits<T> &b)
+{
+  auto i = a.begin();
+
+  // Every cu of a, has to be in *this.
+  for(const auto &cu: b)
+    while(true)
+      {
+        if (i == a.end())
+          return false;
+
+        if (includes(*i, cu))
+          break;
+
+        if (cu.min() < i->min())
+          return false;
+
+        ++i;
+      }
+
+  return true;
 }
 
 template <typename T>
