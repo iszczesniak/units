@@ -54,8 +54,8 @@ public:
   size() const
   {
     return std::accumulate(begin(), end(), 0,
-                           [](const auto &cu)
-                           {return cu.size();});
+                           [](auto c, const auto &cu)
+                           {return c + cu.size();});
   }
 
   // Insert a CU.
