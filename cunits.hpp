@@ -72,8 +72,8 @@ public:
 
 // The < operator establishes an ordering needed for sorting in, e.g.,
 // containers.  We need <, because we cannot use the inclusion
-// relation: the inclusion relation does not induce a strick weak
-// ordering as the incomparability is intransitive.
+// relation: the inclusion relation is not a strick weak ordering as
+// the incomparability is intransitive.
 //
 // We define i < j like this (the same as in the table at the top):
 //
@@ -105,10 +105,6 @@ public:
 //   c. max(i) > max(j): same as 1a, just swap i and j
 //
 // Ordering < is transitive.
-//
-// This relation is not a lexicographic ordering.  It would, had we
-// compared the upper endpoints with <, but then i < j would not hold
-// (while it should) when i includes j.
 //
 // To wrap up:
 //
