@@ -11,6 +11,16 @@
 #include <numeric>
 #include <vector>
 
+template <typename T>
+struct data_type_cmp
+{
+  bool
+  operator()(const cunits<T> &a, const cunits<T> &b)
+  {
+    return a.max() <= b.min();
+  }
+};
+
 // The set of units.
 template <typename T>
 class sunits: private std::vector<cunits<T>>
@@ -18,15 +28,6 @@ class sunits: private std::vector<cunits<T>>
   using data_type = cunits<T>;
   using base_type = std::vector<data_type>;
   using size_type = T;
-
-  struct data_type_cmp
-  {
-    bool
-    operator()(const data_type &a, const data_type &b)
-    {
-      return a.max() <= b.min();
-    }
-  };
 
 public:
   sunits()
@@ -64,7 +65,7 @@ public:
   {
     auto min = cu.min();
     auto max = cu.max();
-    auto i = std::upper_bound(begin(), end(), cu, data_type_cmp());
+    auto i = std::upper_bound(begin(), end(), cu, data_type_cmp<T>());
     auto j = i;
 
     // We may need to remove a neighboring CUs.
@@ -97,7 +98,7 @@ public:
   remove(const data_type &cu)
   {
     // We must find a CU from which we remove the given cu.
-    auto i = std::lower_bound(begin(), end(), cu, data_type_cmp());
+    auto i = std::lower_bound(begin(), end(), cu, data_type_cmp<T>());
     // There must be a CU, and so we don't expect to reach the end.
     assert(i != end());
 
@@ -128,13 +129,6 @@ public:
                                     [ncu](const auto &cu)
                                     {return cu.size() < ncu;}),
                      end());
-  }
-
-  bool
-  includes(const data_type &cu) const
-  {
-    auto i = std::upper_bound(begin(), end(), cu, data_type_cmp());
-    return i != begin() && (--i)->includes(cu);
   }
 
   bool
@@ -236,6 +230,15 @@ includes(const sunits<T> &a, const sunits<T> &b)
       }
 
   return true;
+}
+
+template <typename T>
+bool
+includes(const sunits<T> &su, const cunits<T> &cu)
+{
+  auto i = std::upper_bound(su.begin(), su.end(), cu,
+                            data_type_cmp<T>());
+  return i != su.begin() && includes(*(--i), cu);
 }
 
 template <typename T>
