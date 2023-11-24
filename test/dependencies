@@ -1,0 +1,2 @@
+cunits.o: cunits.cc helpers.hpp ../units.hpp ../cunits.hpp ../sunits.hpp
+sunits.o: sunits.cc ../units.hpp ../cunits.hpp ../sunits.hpp

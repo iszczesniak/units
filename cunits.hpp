@@ -67,7 +67,7 @@ public:
     return !size();
   }
 
-  bool operator == (const cunits &) const = default;
+  constexpr bool operator == (const cunits &) const = default;
 };
 
 // The < operator establishes an ordering needed for sorting in, e.g.,
@@ -118,6 +118,7 @@ public:
 //
 // * i == j otherwise.
 
+// The following implements the above.  It's not the default <=>.
 template<typename T>
 constexpr auto
 operator <=> (const cunits<T> &i, const cunits<T> &j)
@@ -126,6 +127,7 @@ operator <=> (const cunits<T> &i, const cunits<T> &j)
     return std::strong_ordering::less;
   if (i.min() > j.min())
     return std::strong_ordering::greater;
+  // The default <=> has the two below reversed.
   if (i.max() > j.max())
     return std::strong_ordering::less;
   if (i.max() < j.max())

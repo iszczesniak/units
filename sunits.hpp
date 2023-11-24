@@ -11,16 +11,6 @@
 #include <numeric>
 #include <vector>
 
-template <typename T>
-struct data_type_cmp
-{
-  bool
-  operator()(const cunits<T> &a, const cunits<T> &b)
-  {
-    return a.max() <= b.min();
-  }
-};
-
 // The set of units.
 template <typename T>
 class sunits: private std::vector<cunits<T>>
@@ -44,12 +34,9 @@ public:
   using base_type::end;
   using base_type::size;
   using base_type::empty;
-  using base_type::const_iterator;
 
-  // We delegate <=> to base_type.  We do not want the default
-  // implementation of <=> (i.e., lexicographic comparison), because
-  // m_edge should not take part.
-  constexpr auto operator <=> (const sunits &l) const = default;
+  //  constexpr bool operator == (const sunits &) const = default;
+  //  constexpr auto operator <=> (const sunits &l) const = default;
 
   auto
   size() const
@@ -65,7 +52,7 @@ public:
   {
     auto min = cu.min();
     auto max = cu.max();
-    auto i = std::upper_bound(begin(), end(), cu, data_type_cmp<T>());
+    auto i = std::upper_bound(begin(), end(), cu);
     auto j = i;
 
     // We may need to remove a neighboring CUs.
@@ -98,13 +85,13 @@ public:
   remove(const data_type &cu)
   {
     // We must find a CU from which we remove the given cu.
-    auto i = std::lower_bound(begin(), end(), cu, data_type_cmp<T>());
+    auto i = std::lower_bound(begin(), end(), cu);
     // There must be a CU, and so we don't expect to reach the end.
     assert(i != end());
 
     // The cunits to be removed.
     const auto rcu = *i;
-    assert(rcu.includes(cu));
+    assert(includes(rcu, cu));
     // We have to remove the CU we found.
     i = base_type::erase(i);
 
@@ -121,43 +108,18 @@ public:
     assert(verify());
   }
 
-  // Remove those cunits with less than ncu units.
-  void
-  remove(size_type ncu)
-  {
-    base_type::erase(std::remove_if(begin(), end(),
-                                    [ncu](const auto &cu)
-                                    {return cu.size() < ncu;}),
-                     end());
-  }
-
-  bool
-  operator == (const sunits &a) const
-  {
-    if (size() != a.size())
-      return false;
-
-    for (auto i = begin(), j = a.begin(); i != end(); ++i, ++j)
-      if (*i != *j)
-        return false;
-
-    return true;
-  }
-
-  bool
-  operator != (const sunits &a) const
-  {
-    return !(*this == a);
-  }
-
 private:
-  // Make sure the cunits are in the right order.
+  // Make sure the objects are in the order.
   bool
   verify()
   {
+    // Make sure the container is not empty.
     if (auto i = begin(); i != end())
+      // Iterate over every neighbouring pair: p is previous to i.
       for (auto p = i; ++i != end(); ++p)
-        if (p->max() > i->min())
+        // Must hold: p->max() < i->min().  They cannot equal, because
+        // then they should have been merged.
+        if (!(p->max() < i->min()))
           return false;
 
     return true;
@@ -236,8 +198,7 @@ template <typename T>
 bool
 includes(const sunits<T> &su, const cunits<T> &cu)
 {
-  auto i = std::upper_bound(su.begin(), su.end(), cu,
-                            data_type_cmp<T>());
+  auto i = std::upper_bound(su.begin(), su.end(), cu);
   return i != su.begin() && includes(*(--i), cu);
 }
 
@@ -278,21 +239,6 @@ sunits<T>
 intersection(const cunits<T> &a, const sunits<T> &b)
 {
   return intersection(sunits<T>{a}, b);
-}
-
-template <typename T>
-auto
-get_candidate_slots(const sunits<T> &su, int ncu)
-{
-  std::list<cunits<T>> result;
-
-  for (const auto &cu: su)
-    {
-      auto r = get_candidate_slots(cu, ncu);
-      result.insert(result.end(), r.begin(), r.end());
-    }
-
-  return result;
 }
 
 #endif // SUNITS_HPP

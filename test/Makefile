@@ -1,3 +1,6 @@
+# Use the C++ linker
+LINK.o = $(LINK.cc)
+
 TESTS = cunits sunits
 
 #CXXFLAGS = -g -Wno-deprecated
@@ -18,6 +21,6 @@ clean:
 	rm -rf $(TESTS)
 
 depend:
-	g++ -MM -I../ *.cc > dependencies
+	c++ -MM -I../ *.cc > dependencies
 
 include dependencies
