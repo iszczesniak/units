@@ -11,7 +11,8 @@
 #include <numeric>
 #include <vector>
 
-// The set of units.
+// The set of units.  The base container stores non-overlapping cu
+// sorted with < rewritten from <=> defined for cu.
 template <typename T>
 class sunits: private std::vector<cunits<T>>
 {
@@ -80,14 +81,16 @@ public:
     assert(verify());
   }
 
-  // Remove a CU.
+  // Remove a CU.  Object *this must include the cu.
   void
   remove(const data_type &cu)
   {
-    // We must find a CU from which we remove the given cu.
+    // We must find a CU from which we remove the given cu.  Iterator
+    // i points to the first element for which *i < cu fails.
     auto i = std::lower_bound(begin(), end(), cu);
-    // There must be a CU, and so we don't expect to reach the end.
-    assert(i != end());
+
+    assert(i != begin());
+    --i;
 
     // The cunits to be removed.
     const auto rcu = *i;
