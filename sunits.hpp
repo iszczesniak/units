@@ -56,16 +56,16 @@ public:
     auto i = std::upper_bound(begin(), end(), cu);
     auto j = i;
 
-    // We may need to remove a neighboring CUs.
-    
-    // We look for a neighboring CU on the left.
+    // Look left and right for neighboring CUs to remove.
+
+    // Left.
     if (auto i2 = i; i2 != begin() && (--i2)->max() == cu.min())
       {
         --i;
         min = i->min();
       }
 
-    // We look for a neighboring CU on the right.
+    // Right.
     if (j != end() && cu.max() == j->min())
       {
         max = j->max();
@@ -86,9 +86,10 @@ public:
   remove(const data_type &cu)
   {
     // We must find a CU from which we remove the given cu.  Iterator
-    // i points to the first element for which *i < cu fails.
-    auto i = std::lower_bound(begin(), end(), cu);
+    // i points to the first element for which cu < i*.
+    auto i = std::upper_bound(begin(), end(), cu);
 
+    // The element previous to *i must be less than or equal to cu.
     assert(i != begin());
     --i;
 
