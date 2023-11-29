@@ -11,11 +11,11 @@
 #include <numeric>
 #include <vector>
 
-// The set of contiguous units (CU).  The base container stores
-// non-overlapping CUs sorted with < rewritten from <=> defined for
-// cunits.
+// The set of cunits (CU).  The base container stores non-overlapping
+// CUs sorted with < rewritten from <=>.
 //
-// Three functions below require searching through the base container:
+// Three functions below search through the base container using
+// std::upper_bound:
 //
 // * insert 
 //
@@ -23,8 +23,8 @@
 //
 // * includes
 //
-// That searching takes a cu and has to find a cu in the base
-// container.
+// That searching takes a CU and finds the first CU in the base
+// container such that: 
 
 template <typename T>
 class sunits: private std::vector<cunits<T>>
@@ -64,12 +64,13 @@ public:
   void
   insert(const data_type &cu)
   {
-    auto min = cu.min();
-    auto max = cu.max();
     auto i = std::upper_bound(begin(), end(), cu);
     auto j = i;
 
-    // Look left and right for neighboring CUs to remove.
+    // These are the endpoints of the new CU.  Look left and right for
+    // neighboring CUs to remove and then to merge into the new CU.
+    auto min = cu.min();
+    auto max = cu.max();
 
     // Left.
     if (auto i2 = i; i2 != begin() && (--i2)->max() == cu.min())
