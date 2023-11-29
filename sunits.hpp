@@ -11,8 +11,21 @@
 #include <numeric>
 #include <vector>
 
-// The set of units.  The base container stores non-overlapping cu
-// sorted with < rewritten from <=> defined for cu.
+// The set of contiguous units (CU).  The base container stores
+// non-overlapping CUs sorted with < rewritten from <=> defined for
+// cunits.
+//
+// Three functions below require searching through the base container:
+//
+// * insert 
+//
+// * remove
+//
+// * includes
+//
+// That searching takes a cu and has to find a cu in the base
+// container.
+
 template <typename T>
 class sunits: private std::vector<cunits<T>>
 {
