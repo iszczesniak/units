@@ -11,20 +11,27 @@
 #include <numeric>
 #include <vector>
 
-// The set of cunits (CU).  The base container stores non-overlapping
-// CUs sorted with < rewritten from <=>.
+// The set of cunits.  The base container stores non-overlapping
+// cunits sorted with < rewritten from <=>.
 //
-// Three functions below search through the base container using
-// std::upper_bound:
+// Functions insert, remove and includes search through (the base
+// container of) an sunits object with a cunits object called cu to
+// find:
 //
-// * insert 
+// * the place to insert cu (function insert),
 //
-// * remove
+// * a cunits from which to remove the cu (function remove),
 //
-// * includes
+// * a cunits which should include the cu (function includes).
 //
-// That searching takes a CU and finds the first CU in the base
-// container such that: 
+// These functions call std::upper_bound(begin(), end(), cu) that
+// returns iterator i to the first (as the iterator gets incremented,
+// i.e., from left to right) cunits object in the base container such
+// that cu < *i.
+
+// Since i* is the first element, and since the elements in the base
+// container are sorted with <, and since < is transitive, then the
+// preceeding element p this must hold: p <= cu.
 
 template <typename T>
 class sunits: private std::vector<cunits<T>>
@@ -60,7 +67,7 @@ public:
                            {return c + cu.size();});
   }
 
-  // Insert a CU.
+  // Insert a CU.  Object *this must not include the cu.
   void
   insert(const data_type &cu)
   {
