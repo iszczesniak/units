@@ -27,11 +27,15 @@
 // These functions call std::upper_bound(begin(), end(), cu) that
 // returns iterator i to the first (as the iterator gets incremented,
 // i.e., from left to right) cunits object in the base container such
-// that cu < *i.
-
-// Since i* is the first element, and since the elements in the base
-// container are sorted with <, and since < is transitive, then the
-// preceeding element p this must hold: p <= cu.
+// that cu < *i.  What that does mean?
+//
+// For cunits p that preceeds *i, relation p <= cu must hold because:
+//
+// * element *i is the first for which cu < *i holds,
+//
+// * elements in the base container are sorted with <,
+//
+// * ordering < is transitive and total.
 
 template <typename T>
 class sunits: private std::vector<cunits<T>>
@@ -224,7 +228,7 @@ bool
 includes(const sunits<T> &su, const cunits<T> &cu)
 {
   auto i = std::upper_bound(su.begin(), su.end(), cu);
-  return i != su.begin() && includes(*(--i), cu);
+  return i != su.begin() && includes(*--i, cu);
 }
 
 template <typename T>
