@@ -54,7 +54,7 @@ test_insert()
   s.insert({10, 11});
   assert(includes(s, {10, 11}));
 
-  // Insert some preceeding units.
+  // Insert some preceding units.
   s.insert({9, 10});
   assert(includes(s, {9, 11}));
 
@@ -71,7 +71,7 @@ test_insert()
   assert(includes(s, {20, 30}));
   assert(!includes(s, {19, 20}));
 
-  // Insert some preceeding units.
+  // Insert some preceding units.
   s.insert({19, 20});
   assert(includes(s, {19, 21}));
 

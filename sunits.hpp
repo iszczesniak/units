@@ -29,13 +29,19 @@
 // i.e., from left to right) cunits object in the base container such
 // that cu < *i.  What that does mean?
 //
-// For cunits p that preceeds *i, relation p <= cu must hold because:
+// For cunits p that precedes *i, relation p <= cu must hold because:
 //
 // * element *i is the first for which cu < *i holds,
 //
 // * elements in the base container are sorted with <,
 //
 // * ordering < is transitive and total.
+//
+// Relation p <= cu holds in two cases:
+//
+// * p || cu - incomparable because p precedes cu or overlaps with it,
+//
+// * p includes cu.
 
 template <typename T>
 class sunits: private std::vector<cunits<T>>
@@ -228,6 +234,11 @@ bool
 includes(const sunits<T> &su, const cunits<T> &cu)
 {
   auto i = std::upper_bound(su.begin(), su.end(), cu);
+  // If there is a preceding cunits p, then:
+  //
+  // * p includes cu properly or not - return true,
+  //
+  // * p precedes cu or overlaps with it - return false.
   return i != su.begin() && includes(*--i, cu);
 }
 
