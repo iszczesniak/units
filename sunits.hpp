@@ -11,26 +11,16 @@
 #include <numeric>
 #include <vector>
 
-// The set of cunits.  The base container stores non-overlapping
-// cunits sorted with < rewritten from <=>.
+// sunits is the set of cunits.  The base container stores
+// non-overlapping cunits sorted with < rewritten from <=>.
 //
-// Functions insert, remove and includes search through (the base
-// container of) an sunits object with a cunits object called cu to
-// find:
+// We use function upper_bound(begin(), end(), cu) that returns
+// iterator i to the first (as the iterator gets incremented, i.e.,
+// from left to right) cunits object in the base container such that
+// cu < *i.  What that does mean?
 //
-// * the place to insert cu (function insert),
-//
-// * a cunits from which to remove the cu (function remove),
-//
-// * a cunits which should include the cu (function includes).
-//
-// These functions call std::upper_bound(begin(), end(), cu) that
-// returns iterator i to the first (as the iterator gets incremented,
-// i.e., from left to right) cunits object in the base container such
-// that cu < *i.  What that does mean?
-//
-// If there is a cunits p that precedes *i (i.e., *(i - 1) exists),
-// relation p <= cu must hold because:
+// If there is a cunits p that is on the left of *i (i.e., *(i - 1)
+// exists), relation p <= cu must hold because:
 //
 // * element *i is the first for which cu < *i holds,
 //
@@ -38,15 +28,22 @@
 //
 // * ordering < is transitive and total.
 //
-// Relation p <= cu holds in two cases:
-//
-// * p || cu - incomparable because p precedes cu or overlaps () with it,
-//
-// * p includes cu.
-//
 // Function std::upper_bound(begin(), end(), cu) may return a pointer
 // to the beginning or the end, depending on whether there are such *i
 // and p.
+//
+// As given in the table in cunits.hpp, relation p <= cu holds when:
+//
+// * p == cu - cunits are equal,
+//
+// * p < cu - p || cu or p properly includes cu.
+//
+// If min(p) < min(cu) and max(p) < max(cu), then p < cu although one
+// does not include the other.  There are two possibilities:
+//
+// * p precedes cu, i.e., p.max() <= cu.min(),
+//
+// * p overlaps with cu.
 
 template <typename T>
 class sunits: private std::vector<cunits<T>>

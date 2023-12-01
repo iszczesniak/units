@@ -11,7 +11,7 @@
 
 // Relations between resources i and j, where:
 //
-// * || is incomparable,
+// * || is incomparability: set inclusion relation does not hold,
 //
 // * sp is a proper superset,
 //
