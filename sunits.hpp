@@ -29,7 +29,8 @@
 // i.e., from left to right) cunits object in the base container such
 // that cu < *i.  What that does mean?
 //
-// For cunits p that precedes *i, relation p <= cu must hold because:
+// If there is a cunits p that precedes *i (i.e., *(i - 1) exists),
+// relation p <= cu must hold because:
 //
 // * element *i is the first for which cu < *i holds,
 //
@@ -39,9 +40,13 @@
 //
 // Relation p <= cu holds in two cases:
 //
-// * p || cu - incomparable because p precedes cu or overlaps with it,
+// * p || cu - incomparable because p precedes cu or overlaps () with it,
 //
 // * p includes cu.
+//
+// Function std::upper_bound(begin(), end(), cu) may return a pointer
+// to the beginning or the end, depending on whether there are such *i
+// and p.
 
 template <typename T>
 class sunits: private std::vector<cunits<T>>
@@ -77,10 +82,14 @@ public:
                            {return c + cu.size();});
   }
 
-  // Insert a CU.  Object *this must not include the cu.
+  // Insert a CU.  Object *this must not include nor overlap with cu.
   void
   insert(const data_type &cu)
   {
+    // Returns a position where to insert the cu.  Since the cunits
+    // (the cu and those in the base container) do not overlap with
+    // and do not include other cunits, then p <= cu < *i means that p
+    // precedes cu and cu precedes *i.
     auto i = std::upper_bound(begin(), end(), cu);
     auto j = i;
 
@@ -89,7 +98,10 @@ public:
     auto min = cu.min();
     auto max = cu.max();
 
-    // Left.
+    // Left.  We need variable i2, because we need to decrement the
+    // iterator.  Instead of (--i2), we could do (i2 - 1), but that
+    // would require a random access iterator.  With --i2, we require
+    // only bidirectional iterator.
     if (auto i2 = i; i2 != begin() && (--i2)->max() == cu.min())
       {
         --i;
