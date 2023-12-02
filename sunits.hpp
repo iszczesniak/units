@@ -17,7 +17,7 @@
 // We use function upper_bound(begin(), end(), cu) that returns
 // iterator i to the first (as the iterator gets incremented, i.e.,
 // from left to right) cunits object in the base container such that
-// cu < *i.  What that does mean?
+// cu < *i.
 //
 // If there is a cunits p that is on the left of *i (i.e., *(i - 1)
 // exists), relation p <= cu must hold because:
@@ -38,8 +38,8 @@
 //
 // * p < cu - p || cu or p properly includes cu.
 //
-// If min(p) < min(cu) and max(p) < max(cu), then p < cu although one
-// does not include the other.  There are two possibilities:
+// The above p || cu of p < cu happens when min(p) < min(cu) and
+// max(p) < max(cu) in two cases:
 //
 // * p precedes cu, i.e., p.max() <= cu.min(),
 //
@@ -86,7 +86,7 @@ public:
     // Returns a position where to insert the cu.  Since the cunits
     // (the cu and those in the base container) do not overlap with
     // and do not include other cunits, then p <= cu < *i means that p
-    // precedes cu and cu precedes *i.
+    // precedes cu (p and cu cannot equal) and cu precedes *i.
     auto i = std::upper_bound(begin(), end(), cu);
     auto j = i;
 
