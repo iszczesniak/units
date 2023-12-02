@@ -125,29 +125,29 @@ public:
   void
   remove(const data_type &cu)
   {
-    // We must find a CU from which we remove the given cu.  Iterator
-    // i points to the first element for which cu < i*.
+    // Iterator i points to the first element for which cu < i*.
     auto i = std::upper_bound(begin(), end(), cu);
 
-    // The element previous to *i must be less than or equal to cu.
+    // There must exist element p previous to *i such that p <= cu.
     assert(i != begin());
     --i;
 
-    // The cunits to be removed.
-    const auto rcu = *i;
-    assert(includes(rcu, cu));
-    // We have to remove the CU we found.
+    // A copy of p that we remove next.
+    const auto cop = *i;
+    assert(includes(cop, cu));
+    // Remove p.
     i = base_type::erase(i);
 
-    // If there were some units on the right in the removed CU, we
-    // have to add them.
-    if (cu.max() < rcu.max())
-      i = base_type::insert(i, data_type(cu.max(), rcu.max()));
-
-    // If there were some units on the left in the removed CU, we have
-    // to add them.
-    if (rcu.min() < cu.min())
-      base_type::insert(i, data_type(rcu.min(), cu.min()));
+    // If there were some units on the right in p, we add them.  We
+    // first insert the CU from the right side to get iterator i where
+    // we insert the CU from the left side.  We can't swap the order
+    // (i.e., first from the left, then from the right) because the
+    // CUs would be reversed, making the base container inconsistent.
+    if (cu.max() < cop.max())
+      i = base_type::insert(i, data_type(cu.max(), cop.max()));
+    // If there were some units on the left in p, we add them.
+    if (cop.min() < cu.min())
+      base_type::insert(i, data_type(cop.min(), cu.min()));
 
     assert(verify());
   }
