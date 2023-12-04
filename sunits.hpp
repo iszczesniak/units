@@ -242,6 +242,7 @@ template <typename T>
 bool
 includes(const sunits<T> &su, const cunits<T> &cu)
 {
+  // If there is no preceding p, then cu is not included.
   auto i = std::upper_bound(su.begin(), su.end(), cu);
   // If there is a preceding cunits p, then:
   //
