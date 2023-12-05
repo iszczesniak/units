@@ -68,9 +68,6 @@ public:
   using base_type::size;
   using base_type::empty;
 
-  //  constexpr bool operator == (const sunits &) const = default;
-  //  constexpr auto operator <=> (const sunits &l) const = default;
-
   auto
   size() const
   {
