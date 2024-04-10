@@ -72,7 +72,7 @@ public:
 
 // The < operator establishes an ordering needed for sorting in, e.g.,
 // containers.  We need <, because we cannot use the inclusion
-// relation: the inclusion relation is not a strick weak ordering as
+// relation: the inclusion relation is not a strict weak ordering as
 // the incomparability is intransitive.
 //
 // We define i < j like this (the same as in the table at the top):
