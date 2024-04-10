@@ -15,7 +15,9 @@
 //
 // * sp is a proper superset,
 //
-// * sb is a proper subset.
+// * sb is a proper subset,
+//
+// * < is a linear ordering rewritten from <=> defined below.
 //
 //                 -------------------------------------------------------
 //                 | max(i) < max(j) | max(i) = max(j) | max(i) > max(j) |
@@ -118,7 +120,10 @@ public:
 //
 // * i == j otherwise.
 
-// The following implements the above.  It's not the default <=>.
+// The following implements the above, i.e., the lexicographic
+// ordering where the min's are compared with <, and the max's with >.
+// It's not the default <=> which would lexicographically compare both
+// the min's and then the max's with <.
 template<typename T>
 constexpr auto
 operator <=> (const cunits<T> &i, const cunits<T> &j)
