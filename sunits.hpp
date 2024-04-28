@@ -11,8 +11,9 @@
 #include <numeric>
 #include <vector>
 
-// sunits is the set of cunits.  The base container stores
-// non-overlapping cunits sorted with < rewritten from <=>.
+// sunits is the set of cunits.  Non-overlapping cunits are stored
+// sorted in the base container.
+//
 //
 // We use function upper_bound(begin(), end(), cu) that returns
 // iterator i to the first (as the iterator gets incremented, i.e.,
