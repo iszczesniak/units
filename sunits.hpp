@@ -11,9 +11,8 @@
 #include <numeric>
 #include <vector>
 
-// sunits is the set of cunits.  Non-overlapping cunits are stored
-// sorted in the base container.
-//
+// sunits is the set of cunits.  Non-overlapping cunits are stored in
+// the base vector that we keep sorted.
 //
 // We use function upper_bound(begin(), end(), cu) that returns
 // iterator i to the first (as the iterator gets incremented, i.e.,
@@ -35,9 +34,9 @@
 //
 // As given in the table in cunits.hpp, relation p <= cu holds when:
 //
-// * p == cu - cunits are equal,
+// * p == cu, i.e., cunits are equal,
 //
-// * p < cu - p || cu or p properly includes cu.
+// * p < cu, i.e., p || cu or p properly includes cu.
 //
 // The above p || cu of p < cu happens when min(p) < min(cu) and
 // max(p) < max(cu) in two cases:
