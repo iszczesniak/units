@@ -65,7 +65,7 @@ public:
   }
 
   auto operator <=> (const sunits &) const = default;
-  
+
   using base_type::begin;
   using base_type::end;
   using base_type::size;
