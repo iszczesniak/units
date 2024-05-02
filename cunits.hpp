@@ -32,14 +32,15 @@
 template <typename T>
 class cunits
 {
-  // lower and upper endpoints
+  // Lower and upper endpoints.  I would like to have them const, but
+  // the default (copy and move) assignment would be ill-formed.
   T m_min, m_max;
 
 public:
-  cunits(): m_min(0), m_max(0)
-  {
-  }
+  // There is no default constructor, which would be problematic
+  // (with, e.g., comparison).
 
+  // The only constructor.
   cunits(T min, T max): m_min(min), m_max(max)
   {
     assert(min < max);
