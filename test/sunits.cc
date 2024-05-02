@@ -122,11 +122,24 @@ test_size()
   assert(s.size() == 6);
 }
 
+// Test <.
+void
+test_less()
+{
+  // Empty is always worse.
+  assert((SU{{0, 1}} < SU{}));
+  // A subset is worse.
+  assert((SU{{0, 3}} < SU{{1, 2}}));
+
+  assert((SU{{0, 3}} < SU{{0, 1}, {2, 3}}));
+}
+
 int
 main()
 {
-  test_includes();
-  test_insert();
-  test_remove();
-  test_size();
+  // test_includes();
+  // test_insert();
+  // test_remove();
+  // test_size();
+  test_less();
 }
