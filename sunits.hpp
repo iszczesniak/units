@@ -63,8 +63,26 @@ public:
       insert(cu);
   }
 
-  auto operator <=> (const sunits &) const = default;
-  
+  auto operator <=> (const sunits &a) const
+  {
+    auto i = begin();
+    auto j = a.begin();
+
+    while(i != end() && j != a.end())
+      if (*i == *j)
+        continue;
+      else
+        return *i <=> *j;
+
+    if (i == end() && j != a.end())
+      return std::strong_ordering::greater;
+
+    if (i != end() && j == a.end())
+      return std::strong_ordering::less;
+
+    return std::strong_ordering::equal;
+  }
+
   using base_type::begin;
   using base_type::end;
   using base_type::size;
