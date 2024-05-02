@@ -63,12 +63,14 @@ public:
       insert(cu);
   }
 
+  bool operator == (const sunits &) const = default;
+
   auto operator <=> (const sunits &a) const
   {
     auto i = begin();
     auto j = a.begin();
 
-    while(i != end() && j != a.end())
+    for(; i != end() && j != a.end(); ++i, ++j)
       if (*i == *j)
         continue;
       else
