@@ -53,6 +53,14 @@ class sunits: private std::vector<cunits<T>>
   using size_type = T;
 
 public:
+  struct cmp
+  {
+    bool operator()(const data_type &a, const data_type &b)
+    {
+      return a.max() < b.min();
+    }
+  };
+
   sunits()
   {
   }
@@ -86,7 +94,7 @@ public:
     // (the cu and those in the base container) do not overlap with
     // and do not include other cunits, then p <= cu < *i means that p
     // precedes cu (p and cu cannot equal) and cu precedes *i.
-    auto i = std::upper_bound(begin(), end(), cu);
+    auto i = std::upper_bound(begin(), end(), cu, cmp());
     auto j = i;
 
     // These are the endpoints of the new CU.  Look left and right for
@@ -125,7 +133,7 @@ public:
   remove(const data_type &cu)
   {
     // Iterator i points to the first element for which cu < i*.
-    auto i = std::upper_bound(begin(), end(), cu);
+    auto i = std::upper_bound(begin(), end(), cu, cmp());
 
     // There must exist element p previous to *i such that p <= cu.
     assert(i != begin());
@@ -187,10 +195,10 @@ auto operator <=> (const sunits<T> &i, const sunits<T> &j)
       return *ii <=> *ji;
 
   if (ii == i.end() && ji != j.end())
-    return std::strong_ordering::greater;
+    return std::strong_ordering::less;
 
   if (ii != i.end() && ji == j.end())
-    return std::strong_ordering::less;
+    return std::strong_ordering::greater;
 
   return std::strong_ordering::equal;
 }
@@ -268,7 +276,8 @@ bool
 includes(const sunits<T> &su, const cunits<T> &cu)
 {
   // If there is no preceding p, then cu is not included.
-  auto i = std::upper_bound(su.begin(), su.end(), cu);
+  auto i = std::upper_bound(su.begin(), su.end(), cu,
+                            typename sunits<T>::cmp());
   // If there is a preceding cunits p, then:
   //
   // * p includes cu properly or not - return true,
