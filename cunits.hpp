@@ -129,14 +129,15 @@ template<typename T>
 constexpr auto
 operator <=> (const cunits<T> &i, const cunits<T> &j)
 {
-  if (i.min() < j.min())
-    return std::strong_ordering::less;
-  if (i.min() > j.min())
-    return std::strong_ordering::greater;
   // The default <=> has the two below reversed.
-  if (i.max() > j.max())
+  if (i.min() > j.min())
     return std::strong_ordering::less;
+  if (i.min() < j.min())
+    return std::strong_ordering::greater;
+
   if (i.max() < j.max())
+    return std::strong_ordering::less;
+  if (i.max() > j.max())
     return std::strong_ordering::greater;
 
   return std::strong_ordering::equal;

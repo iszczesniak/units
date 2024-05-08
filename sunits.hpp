@@ -65,26 +65,6 @@ public:
 
   bool operator == (const sunits &) const = default;
 
-  auto operator <=> (const sunits &a) const
-  {
-    auto i = begin();
-    auto j = a.begin();
-
-    for(; i != end() && j != a.end(); ++i, ++j)
-      if (*i == *j)
-        continue;
-      else
-        return *i <=> *j;
-
-    if (i == end() && j != a.end())
-      return std::strong_ordering::greater;
-
-    if (i != end() && j == a.end())
-      return std::strong_ordering::less;
-
-    return std::strong_ordering::equal;
-  }
-
   using base_type::begin;
   using base_type::end;
   using base_type::size;
@@ -188,6 +168,32 @@ private:
     return true;
   }
 };
+
+template <typename T>
+auto operator <=> (const sunits<T> &i, const sunits<T> &j)
+{
+  // Should be as easy as below, but not accepted by older compilers.
+  //
+  // return std::lexicographical_compare_three_way(i.begin(), i.end(),
+  //                                               j.begin(), j.end());
+
+  auto i = begin();
+  auto j = a.begin();
+
+  for(; i != end() && j != a.end(); ++i, ++j)
+    if (*i == *j)
+      continue;
+    else
+      return *i <=> *j;
+
+  if (i == end() && j != a.end())
+    return std::strong_ordering::greater;
+
+  if (i != end() && j == a.end())
+    return std::strong_ordering::less;
+
+  return std::strong_ordering::equal;
+}
 
 template <typename T>
 std::ostream &
