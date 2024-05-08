@@ -177,19 +177,19 @@ auto operator <=> (const sunits<T> &i, const sunits<T> &j)
   // return std::lexicographical_compare_three_way(i.begin(), i.end(),
   //                                               j.begin(), j.end());
 
-  auto i = begin();
-  auto j = a.begin();
+  auto ii = i.begin();
+  auto ji = j.begin();
 
-  for(; i != end() && j != a.end(); ++i, ++j)
-    if (*i == *j)
+  for(; ii != i.end() && ji != j.end(); ++ii, ++ji)
+    if (*ii == *ji)
       continue;
     else
-      return *i <=> *j;
+      return *ii <=> *ji;
 
-  if (i == end() && j != a.end())
+  if (ii == i.end() && ji != j.end())
     return std::strong_ordering::greater;
 
-  if (i != end() && j == a.end())
+  if (ii != i.end() && ji == j.end())
     return std::strong_ordering::less;
 
   return std::strong_ordering::equal;
