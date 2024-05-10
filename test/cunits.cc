@@ -21,7 +21,7 @@ is_incomparable(const CU &ri, const CU &rj)
 
 // Returns a list of rj such that: ri < rj
 auto
-greater_RIs(const CU &ri)
+less_RIs(const CU &ri)
 {
   list<CU> l;
 
@@ -50,19 +50,19 @@ test_relations()
   // Row 1, column 1.
   {
     CU rj(ri.min() + 1, ri.max() + 1);
-    assert(is_less(ri, rj));
+    assert(is_greater(ri, rj));
     assert(is_incomparable(ri, rj));
   }
   // Row 1, column 2.
   {
     CU rj(ri.min() + 1, ri.max());
-    assert(is_less(ri, rj));
+    assert(is_greater(ri, rj));
     assert(is_comparable(ri, rj));
   }
   // Row 1, column 3.
   {
     CU rj(ri.min() + 1, ri.max() - 1);
-    assert(is_less(ri, rj));
+    assert(is_greater(ri, rj));
     assert(is_comparable(ri, rj));
   }
 
@@ -70,7 +70,7 @@ test_relations()
   // Row 2, column 1.
   {
     CU rj(ri.min(), ri.max() + 1);
-    assert(is_greater(ri, rj));
+    assert(is_less(ri, rj));
     assert(is_comparable(ri, rj));
   }
   // Row 2, column 2.
@@ -82,7 +82,7 @@ test_relations()
   // Row 2, column 3.
   {
     CU rj(ri.min(), ri.max() - 1);
-    assert(is_less(ri, rj));
+    assert(is_greater(ri, rj));
     assert(is_comparable(ri, rj));
   }
 
@@ -90,19 +90,19 @@ test_relations()
   // Row 3, column 1.
   {
     CU rj(ri.min() - 1, ri.max() + 1);
-    assert(is_greater(ri, rj));
+    assert(is_less(ri, rj));
     assert(is_comparable(ri, rj));
   }
   // Row 3, column 2.
   {
     CU rj(ri.min() - 1, ri.max());
-    assert(is_greater(ri, rj));
+    assert(is_less(ri, rj));
     assert(is_comparable(ri, rj));
   }
   // Row 3, column 3.
   {
     CU rj(ri.min() - 1, ri.max() - 1);
-    assert(is_greater(ri, rj));
+    assert(is_less(ri, rj));
     assert(is_incomparable(ri, rj));
   }
 }
@@ -117,23 +117,23 @@ test_transitivity()
   // This CU could be any.
   CU ri(10, 20);
 
-  for(const auto &rj: greater_RIs(ri))
-    for(const auto &rk: greater_RIs(rj))
+  for(const auto &rj: less_RIs(ri))
+    for(const auto &rk: less_RIs(rj))
       {
-        assert(ri < rj && rj < rk);
-        assert(ri < rk);
+        assert(ri > rj && rj > rk);
+        assert(ri > rk);
 
-        // Test the default implementation of >.
-        assert(rk > rj && rj > ri);
-        assert(rk > ri);
-
-        // Test the default implementation of <=.
-        assert(ri <= rj && rj <= rk);
-        assert(ri <= rk);
+        // Test the default implementation of <.
+        assert(rk < rj && rj < ri);
+        assert(rk < ri);
 
         // Test the default implementation of >=.
-        assert(rk >= rj && rj >= ri);
-        assert(rk >= ri);
+        assert(ri >= rj && rj >= rk);
+        assert(ri >= rk);
+
+        // Test the default implementation of <=.
+        assert(rk <= rj && rj <= ri);
+        assert(rk <= ri);
       }
 }
 
