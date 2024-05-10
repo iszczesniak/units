@@ -71,7 +71,8 @@ public:
       insert(cu);
   }
 
-  bool operator == (const sunits &) const = default;
+  constexpr bool operator == (const sunits &) const = default;
+  // constexpr auto operator <=> (const sunits &) const = default;
 
   using base_type::begin;
   using base_type::end;
@@ -177,6 +178,10 @@ private:
   }
 };
 
+// We have to sort lexicographically ourselves, because the default
+// implementation of <=> is not available on OpenBSD yet.  Take a look
+// at the commented out defaulted declaration of <=> -- if that
+// finally complies, we can remove the function below.
 template <typename T>
 auto operator <=> (const sunits<T> &i, const sunits<T> &j)
 {
