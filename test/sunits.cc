@@ -144,9 +144,9 @@ test_less()
 int
 main()
 {
-  // test_includes();
-  // test_insert();
-  // test_remove();
-  // test_size();
+  test_includes();
+  test_insert();
+  test_remove();
+  test_size();
   test_less();
 }

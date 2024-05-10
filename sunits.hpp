@@ -46,20 +46,11 @@
 // * p overlaps with cu.
 
 template <typename T>
-class sunits: private std::vector<cunits<T>>
+struct sunits: private std::vector<cunits<T>>
 {
   using data_type = cunits<T>;
   using base_type = std::vector<data_type>;
   using size_type = T;
-
-public:
-  struct cmp
-  {
-    bool operator()(const data_type &a, const data_type &b)
-    {
-      return a.max() < b.min();
-    }
-  };
 
   sunits()
   {
@@ -95,7 +86,8 @@ public:
     // (the cu and those in the base container) do not overlap with
     // and do not include other cunits, then p <= cu < *i means that p
     // precedes cu (p and cu cannot equal) and cu precedes *i.
-    auto i = std::upper_bound(begin(), end(), cu, cmp());
+    auto i = std::upper_bound(begin(), end(), cu,
+                              std::greater<data_type>());
     auto j = i;
 
     // These are the endpoints of the new CU.  Look left and right for
@@ -134,7 +126,8 @@ public:
   remove(const data_type &cu)
   {
     // Iterator i points to the first element for which cu < i*.
-    auto i = std::upper_bound(begin(), end(), cu, cmp());
+    auto i = std::upper_bound(begin(), end(), cu,
+                              std::greater<data_type>());
 
     // There must exist element p previous to *i such that p <= cu.
     assert(i != begin());
@@ -280,9 +273,12 @@ template <typename T>
 bool
 includes(const sunits<T> &su, const cunits<T> &cu)
 {
+  using data_type = typename sunits<T>::data_type;
+
   // If there is no preceding p, then cu is not included.
   auto i = std::upper_bound(su.begin(), su.end(), cu,
-                            typename sunits<T>::cmp());
+                            std::greater<data_type>());
+
   // If there is a preceding cunits p, then:
   //
   // * p includes cu properly or not - return true,
