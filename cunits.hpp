@@ -37,12 +37,13 @@ class cunits
   T m_min, m_max;
 
 public:
-  // There is no default constructor, which would be problematic
+  // There is no default constructor, because it would be problematic
   // (with, e.g., comparison).
 
   // The only constructor.
   cunits(T min, T max): m_min(min), m_max(max)
   {
+    // We disallow an empty interval.
     assert(min < max);
   }
 
@@ -195,19 +196,6 @@ operator >> (std::istream &in, cunits<T> &cu)
     }
 
   return in;
-}
-
-template <typename T>
-auto
-get_candidate_intervals(const cunits<T> &cu, int ncu)
-{
-  std::list<cunits<T>> result;
-
-  if (ncu <= cu.size())
-    for(auto m = cu.min(); m <= cu.max() - ncu; ++m)
-      result.push_back(cunits<T>(m, m + ncu));
-
-  return result;
 }
 
 #endif // CUNITS_HPP
