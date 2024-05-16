@@ -20,6 +20,11 @@
 //
 // * < is a linear ordering.
 //
+// The < operator establishes an ordering needed for sorting in, e.g.,
+// containers.  We need <, because we cannot use the inclusion
+// relation: the inclusion relation is not a strict weak ordering as
+// the incomparability is intransitive.
+//
 //                 -------------------------------------------------------
 //                 | max(i) < max(j) | max(i) = max(j) | max(i) > max(j) |
 //                 -------------------------------------------------------
@@ -30,14 +35,35 @@
 // min(i) > min(j) | i sb j | i < j  | i sb j | i < j  | i || j | i < j  |
 //                 -------------------------------------------------------
 //
-// The superset relation must imply the greater relation: if i sp j,
-// then i > j.  However, there are labels that do not compare with the
-// inclusion relation (the || relation), and we have to define linear
-// ordering for them.  We have two choices:
+// To process better itervals first, the superset relation must imply
+// the greater relation: if i sp j, then i > j.  However, there are
+// labels that do not compare with the inclusion relation (the ||
+// relation), and we have to define linear ordering for them.  We have
+// two choices.
 //
-// 1. i > j iff min(i) < min(j) or min(i) == min(j) and max(i) > max(j)
+// The first choice:
 //
-// 2. i > j iff max(i) > max(j) or max(i) == max(j) and min(i) < min(j)
+// >>>
+// <=>
+// <<<
+//
+// i > j iff min(i) < min(j) or min(i) == min(j) and max(i) > max(j)
+//
+// The second choice:
+//
+// <>>
+// <=>
+// <<>
+//
+// i > j iff max(i) > max(j) or max(i) == max(j) and min(i) < min(j)
+//
+// The < relation is lexicographic where the min's are compared with
+// <, and the max's with >.  In the first choice the lower endpoints
+// are compared first and the upper second, while in the second choice
+// it's the other way around.
+//
+// The default <=> would lexicographically compare both the min's and
+// then the max's with <.  First mins, then maxes.
 
 template <std::totally_ordered T>
 class cunits
@@ -84,67 +110,34 @@ public:
   constexpr bool operator == (const cunits &) const = default;
 };
 
-// The < operator establishes an ordering needed for sorting in, e.g.,
-// containers.  We need <, because we cannot use the inclusion
-// relation: the inclusion relation is not a strict weak ordering as
-// the incomparability is intransitive.
+// The <=> comparison implements the table from the top and the first
+// choice of breaking ties:
 //
-// We define i < j like this (the same as in the table at the top):
+// i > j iff min(i) < min(j) or min(i) == min(j) and max(i) > max(j)
 //
-// 1. If min(i) < min(j): always i < j, regardless of:
+// And so:
 //
-//   a. max(i) < max(j): i and j are incomparable, and so we need to
-//                       break this tie somehow; the ordering between
-//                       incomparable labels can be arbitrary, but we
-//                       say i < j;
-//
-//   b. max(i) == max(j): i < j because i properly includes j
-//
-//   c. max(i) > max(j): i < j because i properly includes j
-//
-// 2. If min(i) == min(j), and:
-//
-//   a. max(i) < max(j): j properly includes i, and so j < i
-//
-//   b. max(i) == max(j): i == j, and so !(i < j)
-//
-//   c. max(i) > max(j): j < i, same as 2a, just swap i and j
-//
-// 3. If min(i) > min(j), and:
-//
-//   a. max(i) < max(j): same as 1c, just swap i and j
-//
-//   b. max(i) == max(j): same as 1b, just swap i and j
-//
-//   c. max(i) > max(j): same as 1a, just swap i and j
-//
-// Ordering < is transitive.
-//
-// To wrap up:
-//
-// * i < j if:
+// * i > j if:
 //
 //   min(i) < min(j) || min(i) == min(j) && max(i) > max(j)
 //
-// * i > j if:
+// * i < j if:
 //
 //   min(i) > min(j) || min(i) == min(j) && max(i) < max(j)
 //
 // * i == j otherwise.
 
-// The following implements the above, i.e., the lexicographic
-// ordering where the min's are compared with <, and the max's with >.
-// It's not the default <=> which would lexicographically compare both
-// the min's and then the max's with <.
 template<typename T>
 constexpr auto
 operator <=> (const cunits<T> &i, const cunits<T> &j)
 {
+  // Compare the lower endpoints first.
   if (i.min() < j.min())
     return std::strong_ordering::greater;
   if (i.min() > j.min())
     return std::strong_ordering::less;
 
+  // Compare the upper endpoints next.
   if (i.max() > j.max())
     return std::strong_ordering::greater;
   if (i.max() < j.max())
