@@ -63,7 +63,7 @@
 // it's the other way around.
 //
 // The default <=> would lexicographically compare both the min's and
-// then the max's with <.  First min's, then max's.
+// the max's with <.  First min's, then max's.
 
 template <std::totally_ordered T>
 class cunits
