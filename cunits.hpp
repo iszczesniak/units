@@ -35,11 +35,11 @@
 // min(i) > min(j) | i sb j | i < j  | i sb j | i < j  | i || j | i < j  |
 //                 -------------------------------------------------------
 //
-// To process better itervals first, the superset relation must imply
-// the greater relation: if i sp j, then i > j.  However, there are
-// labels that do not compare with the inclusion relation (the ||
-// relation), and we have to define linear ordering for them.  We have
-// two choices.
+// Better intervals must be processed first, so the superset relation
+// must imply the greater relation: if i sp j, then i > j.  However,
+// there are labels that do not compare with the inclusion relation
+// (the || relation), and we have to define linear ordering for them.
+// We have two choices.
 //
 // The first choice:
 //
@@ -63,7 +63,7 @@
 // it's the other way around.
 //
 // The default <=> would lexicographically compare both the min's and
-// then the max's with <.  First mins, then maxes.
+// then the max's with <.  First min's, then max's.
 
 template <std::totally_ordered T>
 class cunits
