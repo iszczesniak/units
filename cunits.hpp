@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <compare>
+#include <concepts>
 #include <iostream>
 #include <list>
 
@@ -38,7 +39,7 @@
 //
 // 2. i > j iff max(i) > max(j) or max(i) == max(j) and min(i) < min(j)
 
-template <typename T>
+template <std::totally_ordered T>
 class cunits
 {
   // Lower and upper endpoints.  I would like to have them const, but
@@ -139,7 +140,7 @@ template<typename T>
 constexpr auto
 operator <=> (const cunits<T> &i, const cunits<T> &j)
 {
-  // The default <=> has the two below reversed.
+  // The default <=> would have the two below reversed.
   if (i.min() > j.min())
     return std::strong_ordering::less;
   if (i.min() < j.min())
