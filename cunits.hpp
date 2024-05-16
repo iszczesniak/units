@@ -28,6 +28,15 @@
 //                 -------------------------------------------------------
 // min(i) > min(j) | i sb j | i < j  | i sb j | i < j  | i || j | i < j  |
 //                 -------------------------------------------------------
+//
+// The superset relation must imply the greater relation: if i sp j,
+// then i > j.  However, there are labels that do not compare with the
+// inclusion relation (the || relation), and we have to define linear
+// ordering for them.  We have two choices.
+//
+// 1. i > j iff min(i) < min(j) or min(i) == min(j) and max(i) > max(j)
+//
+// 2. i > j iff max(i) > max(j) or max(i) == max(j) and min(i) < min(j)
 
 template <typename T>
 class cunits
