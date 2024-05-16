@@ -18,7 +18,7 @@
 //
 // * sb is a proper subset,
 //
-// * < is a linear ordering rewritten from <=> defined below.
+// * < is a linear ordering.
 //
 //                 -------------------------------------------------------
 //                 | max(i) < max(j) | max(i) = max(j) | max(i) > max(j) |
@@ -140,7 +140,6 @@ template<typename T>
 constexpr auto
 operator <=> (const cunits<T> &i, const cunits<T> &j)
 {
-  // The default <=> would have the two below reversed.
   if (i.min() > j.min())
     return std::strong_ordering::less;
   if (i.min() < j.min())
