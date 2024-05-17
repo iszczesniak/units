@@ -57,13 +57,13 @@
 //
 // i > j iff max(i) > max(j) or max(i) == max(j) and min(i) < min(j)
 //
-// The < relation is lexicographic where the min's are compared with
-// <, and the max's with >.  In the first choice the lower endpoints
-// are compared first and the upper second, while in the second choice
-// it's the other way around.
+// The < relation is lexicographic: the min's are compared with < and
+// max's are compared with > (note it's the reverse).  In the first
+// choice the min's are compared first and the max's second, while in
+// the second choice it's the other way around.
 //
 // The default <=> would lexicographically compare both the min's and
-// the max's with <.  First min's, then max's.
+// the max's with <.  First min's, then max's.  Without >.
 
 template <std::totally_ordered T>
 class cunits
