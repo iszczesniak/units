@@ -8,17 +8,17 @@
 #include <list>
 
 // Describes a resource interval [min, max), i.e., min is included,
-// and max is not.
+// and max is not.  The interval endpoints are totally ordered.
 
-// Relations between resources i and j, where:
+// Relations between resource invervals i and j, where:
 //
-// * || is incomparability: set inclusion relation does not hold,
-//
-// * sp is a proper superset,
+// * < is a linear ordering.
 //
 // * sb is a proper subset,
 //
-// * < is a linear ordering.
+// * sp is a proper superset,
+//
+// * || is incomparability: set inclusion relation does not hold,
 //
 // The < operator establishes an ordering needed for sorting in, e.g.,
 // containers.  We need <, because we cannot use the inclusion
