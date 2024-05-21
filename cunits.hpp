@@ -25,15 +25,15 @@
 // relation: the inclusion relation is not a strict weak ordering as
 // the incomparability is intransitive.
 //
-//                 -------------------------------------------------------
-//                 | max(i) < max(j) | max(i) = max(j) | max(i) > max(j) |
-//                 -------------------------------------------------------
-// min(i) < min(j) | i || j | i > j  | i sp j | i > j  | i sp j | i > j  |
-//                 -------------------------------------------------------
-// min(i) = min(j) | i sb j | i < j  |      i = j      | i sp j | i > j  |
-//                 -------------------------------------------------------
-// min(i) > min(j) | i sb j | i < j  | i sb j | i < j  | i || j | i < j  |
-//                 -------------------------------------------------------
+//               ----------------------------------------------------
+//               | i.max < j.max  | i.max = j.max  | i.max > j.max  |
+//               ----------------------------------------------------
+// i.min < j.min | i || j | i > j | i sp j | i > j | i sp j | i > j |
+//               ----------------------------------------------------
+// i.min = j.min | i sb j | i < j |      i = j     | i sp j | i > j |
+//               ----------------------------------------------------
+// i.min > j.min | i sb j | i < j | i sb j | i < j | i || j | i < j |
+//               ----------------------------------------------------
 //
 // Better intervals must be processed first, so the superset relation
 // must imply the greater relation: if i sp j, then i > j.  However,
@@ -47,7 +47,7 @@
 // <=>
 // <<<
 //
-// i > j iff min(i) < min(j) or min(i) == min(j) and max(i) > max(j)
+// i > j iff i.min < j.min or i.min == j.min and i.max > j.max
 //
 // The second choice:
 //
@@ -55,7 +55,7 @@
 // <=>
 // <<>
 //
-// i > j iff max(i) > max(j) or max(i) == max(j) and min(i) < min(j)
+// i > j iff i.max > j.max or i.max == j.max and i.min < j.min
 //
 // The < relation is lexicographic: the min's are compared with < and
 // max's are compared with > (note it's the reverse).  In the first
@@ -113,17 +113,17 @@ public:
 // The <=> comparison implements the table from the top and the first
 // choice of breaking ties:
 //
-// i > j iff min(i) < min(j) or min(i) == min(j) and max(i) > max(j)
+// i > j iff i.min < j.min or i.min == j.min and i.max > j.max
 //
 // And so:
 //
 // * i > j if:
 //
-//   min(i) < min(j) || min(i) == min(j) && max(i) > max(j)
+//   i.min < j.min || i.min == j.min && i.max > j.max
 //
 // * i < j if:
 //
-//   min(i) > min(j) || min(i) == min(j) && max(i) < max(j)
+//   i.min > j.min || i.min == j.min && i.max < j.max
 //
 // * i == j otherwise.
 
