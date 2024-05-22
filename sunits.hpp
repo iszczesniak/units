@@ -12,31 +12,36 @@
 #include <vector>
 
 // sunits is the set of cunits.  Non-overlapping cunits are stored in
-// the base vector that we keep sorted.
+// the base vector that we keep sorted.  Not every cu can be inserted
+// or removed: we can insert only a cunit that in no part is already
+// included, we can remove only a cunit that is already included.  We
+// do not allow for inserting or removing any cunits, becasue we do
+// not need it, and the implementation would be more complicated and
+// less efficient.
 //
-// We use function upper_bound(begin(), end(), cu) that returns
-// iterator i to the first (as the iterator gets incremented, i.e.,
-// from left to right) cunits object in the base container such that
-// cu < *i.
+// We need to find the first cunits that is greater than a given cu.
+// Function upper_bound(begin(), end(), cu) returns iterator i to the
+// first (as the iterator gets incremented, i.e., from left to right)
+// cunits object in the base container such that cu < *i.
 //
-// If there is a cunits p that is on the left of *i (i.e., *(i - 1)
-// exists), relation p <= cu must hold because:
+// Function std::upper_bound(begin(), end(), cu) may return a pointer
+// to the beginning or the end.  If there is a cunits p that is on the
+// left of *i (i.e., *(i - 1) exists), relation p < cu must hold
+// because:
 //
 // * element *i is the first for which cu < *i holds,
 //
 // * elements in the base container are sorted with <,
 //
+// * elements in the base contatiner are non-overlapping,
+//
 // * ordering < is transitive and total.
 //
-// Function std::upper_bound(begin(), end(), cu) may return a pointer
-// to the beginning or the end, depending on whether there are such *i
-// and p.
+// As given in the table in cunits.hpp, relation p < cu holds when:
 //
-// As given in the table in cunits.hpp, relation p <= cu holds when:
+// * p || cu or
 //
-// * p == cu, i.e., cunits are equal,
-//
-// * p < cu, i.e., p || cu or p properly includes cu.
+// * p properly includes cu.
 //
 // The above p || cu of p < cu happens when min(p) < min(cu) and
 // max(p) < max(cu) in two cases:
@@ -78,7 +83,7 @@ struct sunits: private std::vector<cunits<T>>
                            {return c + cu.size();});
   }
 
-  // Insert a CU.  Object *this must not include nor overlap with cu.
+  // Insert a CU.  No part of the cu can already be included.
   void
   insert(const data_type &cu)
   {
@@ -121,7 +126,7 @@ struct sunits: private std::vector<cunits<T>>
     assert(verify());
   }
 
-  // Remove a CU.  Object *this must include the cu.
+  // Remove a CU.  The cu must be already included.
   void
   remove(const data_type &cu)
   {
