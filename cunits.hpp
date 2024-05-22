@@ -10,7 +10,7 @@
 // Describes a resource interval [min, max), i.e., min is included,
 // and max is not.  The interval endpoints are totally ordered.
 
-// Relations between resource invervals i and j, where:
+// Relations between resource invervals i and j:
 //
 // * < is a linear ordering.
 //
@@ -18,7 +18,7 @@
 //
 // * sp is a proper superset,
 //
-// * || is incomparability: set inclusion relation does not hold,
+// * || is sb-incomparability: set inclusion relation does not hold.
 //
 // The < operator establishes an ordering needed for sorting in, e.g.,
 // containers.  We need <, because we cannot use the inclusion
