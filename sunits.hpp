@@ -37,11 +37,8 @@
 //
 // * ordering < is transitive and total.
 //
-// As given in the table in cunits.hpp, relation p < cu holds when:
-//
-// * p || cu or
-//
-// * p properly includes cu.
+// As given in the table in cunits.hpp, relation p < cu holds when p
+// || cu or p properly includes cu.
 //
 // The above p || cu of p < cu happens when min(p) < min(cu) and
 // max(p) < max(cu) in two cases:
@@ -104,14 +101,14 @@ struct sunits: private std::vector<cunits<T>>
     // iterator.  Instead of (--i2), we could do (i2 - 1), but that
     // would require a random access iterator.  With --i2, we require
     // only bidirectional iterator.
-    if (auto i2 = i; i2 != begin() && (--i2)->max() == cu.min())
+    if (auto i2 = i; i2 != begin() && (--i2)->max() == min)
       {
         --i;
         min = i->min();
       }
 
     // Right.
-    if (j != end() && cu.max() == j->min())
+    if (j != end() && max == j->min())
       {
         max = j->max();
         ++j;
