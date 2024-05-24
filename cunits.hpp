@@ -25,6 +25,8 @@
 // relation: the inclusion relation is not a strict weak ordering as
 // the incomparability is intransitive.
 //
+// Rows 1, 2 and 3, and columns a, b and c:
+//
 //               ----------------------------------------------------
 //               | i.max < j.max  | i.max = j.max  | i.max > j.max  |
 //               ----------------------------------------------------
