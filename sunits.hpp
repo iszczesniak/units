@@ -76,43 +76,38 @@ struct sunits: private std::vector<cunits<T>>
   size() const
   {
     return std::accumulate(begin(), end(), 0,
-                           [](auto c, const auto &cu)
-                           {return c + cu.size();});
+                           [](auto c, const auto &in)
+                           {return c + in.size();});
   }
 
   // Insert a CU.  No part of the cu can already be included.
   void
-  insert(const data_type &cu)
+  insert(const data_type &iv)
   {
     // Returns a position where to insert the cu.  Since the cunits
     // (the cu and those in the base container) do not overlap with
     // and do not include other cunits, then p <= cu < *i means that p
     // precedes cu (p and cu cannot equal) and cu precedes *i.
-    auto i = std::upper_bound(begin(), end(), cu,
+    auto i = std::upper_bound(begin(), end(), iv,
                               std::greater<data_type>());
     auto j = i;
 
     // These are the endpoints of the new CU.  Look left and right for
     // neighboring CUs to remove and then to merge into the new CU.
-    auto min = cu.min();
-    auto max = cu.max();
+    auto min = iv.min();
+    auto max = iv.max();
 
     // Left.  We need variable i2, because we need to decrement the
     // iterator.  Instead of (--i2), we could do (i2 - 1), but that
     // would require a random access iterator.  With --i2, we require
     // only bidirectional iterator.
-    if (auto i2 = i; i2 != begin() && (--i2)->max() == min)
-      {
-        --i;
-        min = i->min();
-      }
+    if (i != begin())
+      if (auto i2 = i; (--i2)->max() == min)
+        --i, min = i->min();
 
     // Right.
     if (j != end() && max == j->min())
-      {
-        max = j->max();
-        ++j;
-      }
+      max = j->max(), ++j;
 
     j = base_type::erase(i, j);
     data_type icu(min, max);
@@ -125,10 +120,10 @@ struct sunits: private std::vector<cunits<T>>
 
   // Remove a CU.  The cu must be already included.
   void
-  remove(const data_type &cu)
+  remove(const data_type &iv)
   {
     // Iterator i points to the first element for which cu < i*.
-    auto i = std::upper_bound(begin(), end(), cu,
+    auto i = std::upper_bound(begin(), end(), iv,
                               std::greater<data_type>());
 
     // There must exist element p previous to *i such that p <= cu.
@@ -137,7 +132,7 @@ struct sunits: private std::vector<cunits<T>>
 
     // A copy of p that we remove next.
     const auto cop = *i;
-    assert(includes(cop, cu));
+    assert(includes(cop, iv));
     // Remove p.
     i = base_type::erase(i);
 
@@ -146,11 +141,11 @@ struct sunits: private std::vector<cunits<T>>
     // we insert the CU from the left side.  We can't swap the order
     // (i.e., first from the left, then from the right) because the
     // CUs would be reversed, making the base container inconsistent.
-    if (cu.max() < cop.max())
-      i = base_type::insert(i, data_type(cu.max(), cop.max()));
+    if (iv.max() < cop.max())
+      i = base_type::insert(i, data_type(iv.max(), cop.max()));
     // If there were some units on the left in p, we add them.
-    if (cop.min() < cu.min())
-      base_type::insert(i, data_type(cop.min(), cu.min()));
+    if (cop.min() < iv.min())
+      base_type::insert(i, data_type(cop.min(), iv.min()));
 
     assert(verify());
   }
@@ -253,16 +248,16 @@ includes(const sunits<T> &a, const sunits<T> &b)
   auto i = a.begin();
 
   // Every cu of a, has to be in *this.
-  for(const auto &cu: b)
+  for(const auto &iv: b)
     while(true)
       {
-        if (i == a.end())
+        if (i == iv.end())
           return false;
 
-        if (includes(*i, cu))
+        if (includes(*i, iv))
           break;
 
-        if (cu.min() < i->min())
+        if (iv.min() < i->min())
           return false;
 
         ++i;
@@ -295,7 +290,9 @@ intersection(const sunits<T> &a, const sunits<T> &b)
 {
   sunits<T> ret;
 
-  auto i = a.begin(), j = b.begin();
+  auto i = a.begin();
+  auto j = b.begin();
+
   while(i != a.end() && j != b.end())
     {
       if (i->max() <= j->min())
