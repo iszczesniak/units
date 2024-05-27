@@ -302,12 +302,12 @@ includes(const sunits<T> &a, const sunits<T> &b)
 
 template <typename T>
 bool
-includes(const sunits<T> &su, const cunits<T> &cu)
+includes(const sunits<T> &su, const cunits<T> &iv)
 {
   using data_type = typename sunits<T>::data_type;
 
   // If there is no preceding p, then cu is not included.
-  auto i = std::upper_bound(su.begin(), su.end(), cu,
+  auto i = std::upper_bound(su.begin(), su.end(), iv,
                             std::greater<data_type>());
 
   // If there is a preceding cunits p, then:
@@ -315,7 +315,7 @@ includes(const sunits<T> &su, const cunits<T> &cu)
   // * p includes cu properly or not - return true,
   //
   // * p precedes cu or overlaps with it - return false.
-  return i != su.begin() && includes(*--i, cu);
+  return i != su.begin() && includes(*--i, iv);
 }
 
 template <typename T>
