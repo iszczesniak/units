@@ -288,13 +288,13 @@ includes(const sunits<T> &a, const sunits<T> &b)
       if (i == a.begin())
         return false;
 
-      if (auto i2 = i; !includes(--i2, *j))
+      if (auto i2 = i; !includes(*--i2, *j))
         return false;
 
       while(++j != b.end())
         {
           i = std::lower_bound(i, a.end(), *j);
-          if (auto i2 = i; !includes(--i2, *j))
+          if (auto i2 = i; !includes(*--i2, *j))
             return false;
         }
     }
