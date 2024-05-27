@@ -65,7 +65,7 @@ struct sunits: private std::vector<cunits<T>>
                            {return c + in.size();});
   }
 
-  // Insert a new interval.  No part of it can already be included.
+  // Insert an interval iv.  No part of it can already be included.
   void
   insert(const data_type &iv)
   {
@@ -94,7 +94,7 @@ struct sunits: private std::vector<cunits<T>>
 
     // These are the endpoints of the interval to insert.  Look left
     // and right for neighboring intervals to remove and then to merge
-    // into the new inerval.
+    // into the new interval.
     auto min = iv.min();
     auto max = iv.max();
 
@@ -279,23 +279,25 @@ template <typename T>
 bool
 includes(const sunits<T> &a, const sunits<T> &b)
 {
-  auto i = a.begin();
+  auto j = b.begin();
 
-  // Labels in a and b are sorted.
-  for(const auto &iv: b)
-    while(true)
-      {
-        if (i == iv.end())
-          return false;
+  if (j != b.end())
+    {
+      // This is the only search that can return i == a.begin();
+      auto i = std::lower_bound(a.begin(), a.end(), *j);
+      if (i == a.begin())
+        return false;
 
-        if (includes(*i, iv))
-          break;
+      if (auto i2 = i; !includes(--i2, *j))
+        return false;
 
-        if (iv.min() < i->min())
-          return false;
-
-        ++i;
-      }
+      while(++j != b.end())
+        {
+          i = std::lower_bound(i, a.end(), *j);
+          if (auto i2 = i; !includes(--i2, *j))
+            return false;
+        }
+    }
 
   return true;
 }
