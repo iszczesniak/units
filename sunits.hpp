@@ -306,15 +306,13 @@ includes(const sunits<T> &su, const cunits<T> &iv)
 {
   using data_type = typename sunits<T>::data_type;
 
-  // If there is no preceding p, then cu is not included.
   auto i = std::upper_bound(su.begin(), su.end(), iv,
                             std::greater<data_type>());
 
-  // If there is a preceding cunits p, then:
-  //
-  // * p includes cu properly or not - return true,
-  //
-  // * p precedes cu or overlaps with it - return false.
+  // If there is no preceding interval, then iv is not included.  If
+  // there is a preceding interval, then it's the only interval that
+  // can include iv.  For reasoning, please read the comments in
+  // function "remove".
   return i != su.begin() && includes(*--i, iv);
 }
 
