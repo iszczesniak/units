@@ -4,7 +4,7 @@
 #include <cassert>
 
 void
-test_includes()
+test_includes_interval()
 {
   SU s0{};
   assert(!includes(s0, {0, 1}));  
@@ -43,6 +43,18 @@ test_includes()
 
   assert(!includes(s2, {35, 45}));
   assert(!includes(s2, {40, 41}));
+}
+
+void
+test_includes_intervals()
+{
+  // The empty includes the empty.
+  assert(includes(SU{}, SU{}));
+
+  // The non-empty includes the empty.
+  assert(includes(SU{CU(0, 1)}, SU{}));
+
+  assert(includes(SU{CU(0, 1)}, SU{CU(0, 1)}));
 }
 
 void
@@ -144,7 +156,8 @@ test_less()
 int
 main()
 {
-  test_includes();
+  test_includes_interval();
+  test_includes_intervals();
   test_insert();
   test_remove();
   test_size();

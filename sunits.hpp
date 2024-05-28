@@ -284,7 +284,8 @@ includes(const sunits<T> &a, const sunits<T> &b)
   if (j != b.end())
     {
       // This is the only search that can return i == a.begin();
-      auto i = std::lower_bound(a.begin(), a.end(), *j);
+      auto i = std::upper_bound(a.begin(), a.end(), *j);
+
       if (i == a.begin())
         return false;
 
@@ -293,7 +294,7 @@ includes(const sunits<T> &a, const sunits<T> &b)
 
       while(++j != b.end())
         {
-          i = std::lower_bound(i, a.end(), *j);
+          i = std::upper_bound(i, a.end(), *j);
           if (auto i2 = i; !includes(*--i2, *j))
             return false;
         }
