@@ -54,7 +54,29 @@ test_includes_intervals()
   // The non-empty includes the empty.
   assert(includes(SU{CU(0, 1)}, SU{}));
 
-  assert(includes(SU{CU(0, 1)}, SU{CU(0, 1)}));
+  // A set should include the same set.
+  SU su1 = {CU(0, 5), CU(10, 15), CU(20, 25)};
+
+  assert(includes(SU{CU(0, 5)}, SU{CU(0, 5)}));
+  assert(includes(SU{CU(0, 5), CU(10, 15)},
+                  SU{CU(0, 5), CU(10, 15)}));
+  assert(includes(su1, su1));
+
+  // Subsets of su1.
+  assert(includes(su1, SU{CU(0, 5)}));
+  assert(includes(su1, SU{CU(1, 5)}));
+  assert(includes(su1, SU{CU(0, 4)}));
+  assert(includes(su1, SU{CU(1, 4)}));
+
+  assert(includes(su1, SU{CU(10, 15)}));
+  assert(includes(su1, SU{CU(11, 15)}));
+  assert(includes(su1, SU{CU(10, 14)}));
+  assert(includes(su1, SU{CU(11, 14)}));
+
+  assert(includes(su1, SU{CU(20, 25)}));
+  assert(includes(su1, SU{CU(21, 25)}));
+  assert(includes(su1, SU{CU(20, 24)}));
+  assert(includes(su1, SU{CU(21, 24)}));
 }
 
 void

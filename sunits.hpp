@@ -284,7 +284,8 @@ includes(const sunits<T> &a, const sunits<T> &b)
   if (j != b.end())
     {
       // This is the only search that can return i == a.begin();
-      auto i = std::upper_bound(a.begin(), a.end(), *j);
+      auto i = std::upper_bound(a.begin(), a.end(), *j,
+                                std::greater<cunits<T>>());
 
       if (i == a.begin())
         return false;
@@ -292,9 +293,11 @@ includes(const sunits<T> &a, const sunits<T> &b)
       if (auto i2 = i; !includes(*--i2, *j))
         return false;
 
+      // Check the next interval in b, if it exists.
       while(++j != b.end())
         {
-          i = std::upper_bound(i, a.end(), *j);
+          i = std::upper_bound(i, a.end(), *j,
+                               std::greater<cunits<T>>());
           if (auto i2 = i; !includes(*--i2, *j))
             return false;
         }
