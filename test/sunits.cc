@@ -55,28 +55,37 @@ test_includes_intervals()
   assert(includes(SU{CU(0, 1)}, SU{}));
 
   // A set should include the same set.
-  SU su1 = {CU(0, 5), CU(10, 15), CU(20, 25)};
+  SU su1{{0, 5}, {10, 15}, {20, 25}};
 
-  assert(includes(SU{CU(0, 5)}, SU{CU(0, 5)}));
-  assert(includes(SU{CU(0, 5), CU(10, 15)},
-                  SU{CU(0, 5), CU(10, 15)}));
+  assert(includes(SU{{0, 5}}, SU{{0, 5}}));
+  assert(includes(SU{{0, 5}, {10, 15}},
+                  SU{{0, 5}, {10, 15}}));
   assert(includes(su1, su1));
 
   // Subsets of su1.
-  assert(includes(su1, SU{CU(0, 5)}));
-  assert(includes(su1, SU{CU(1, 5)}));
-  assert(includes(su1, SU{CU(0, 4)}));
-  assert(includes(su1, SU{CU(1, 4)}));
+  assert(includes(su1, SU{{0, 5}}));
+  assert(includes(su1, SU{{1, 5}}));
+  assert(includes(su1, SU{{0, 4}}));
+  assert(includes(su1, SU{{1, 4}}));
 
-  assert(includes(su1, SU{CU(10, 15)}));
-  assert(includes(su1, SU{CU(11, 15)}));
-  assert(includes(su1, SU{CU(10, 14)}));
-  assert(includes(su1, SU{CU(11, 14)}));
+  assert(includes(su1, SU{{10, 15}}));
+  assert(includes(su1, SU{{11, 15}}));
+  assert(includes(su1, SU{{10, 14}}));
+  assert(includes(su1, SU{{11, 14}}));
 
-  assert(includes(su1, SU{CU(20, 25)}));
-  assert(includes(su1, SU{CU(21, 25)}));
-  assert(includes(su1, SU{CU(20, 24)}));
-  assert(includes(su1, SU{CU(21, 24)}));
+  assert(includes(su1, SU{{20, 25}}));
+  assert(includes(su1, SU{{21, 25}}));
+  assert(includes(su1, SU{{20, 24}}));
+  assert(includes(su1, SU{{21, 24}}));
+
+  SU sua{{16, 17}, {22, 23}, {27, 28}, {29, 30}, {31, 32}, {33, 34},
+         {35, 36}, {44, 45}, {50, 51}, {63, 64}, {65, 66}, {67, 68},
+         {84, 85}, {86, 87}, {103, 104}, {106, 107}, {136, 137},
+         {150, 151}, {156, 157}};
+
+  SU sub{{29, 30}, {44, 45}, {50, 51}, {67, 68}, {136, 137}};
+
+  assert(includes(sua, sub));
 }
 
 void
