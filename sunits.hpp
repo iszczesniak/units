@@ -274,10 +274,35 @@ operator >> (std::istream &in, sunits<T> &su)
   return in;
 }
 
-// Every interval of b, has to be in a.
 template <typename T>
 bool
 includes(const sunits<T> &a, const sunits<T> &b)
+{
+  auto i = a.begin();
+
+  // Every cu of a, has to be in *this.
+  for(const auto &cu: b)
+    while(true)
+      {
+        if (i == a.end())
+          return false;
+
+        if (includes(*i, cu))
+          break;
+
+        if (cu.min() < i->min())
+          return false;
+
+        ++i;
+      }
+
+  return true;
+}
+
+// Every interval of b, has to be in a.
+template <typename T>
+bool
+includes2(const sunits<T> &a, const sunits<T> &b)
 {
   auto j = b.begin();
 
