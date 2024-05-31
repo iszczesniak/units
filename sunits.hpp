@@ -323,9 +323,9 @@ includes2(const sunits<T> &a, const sunits<T> &b)
 
       while(true)
         {
-          // If *--i2 > *j, then *--i2 either precedes or includes *j,
-          // and so *--i2 cannot be included in a.
-          if (auto i2 = i; *--i2 > *j)
+          // If *j > *--i2 >, then *j either precedes or includes
+          // *--i2, and so *j cannot be included in a.
+          if (auto i2 = i; *j > *--i2)
             return false;
 
           if (++j == b.end())
