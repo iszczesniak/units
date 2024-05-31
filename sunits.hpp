@@ -274,6 +274,7 @@ operator >> (std::istream &in, sunits<T> &su)
   return in;
 }
 
+// Every interval of b has to be in a.
 template <typename T>
 bool
 includes(const sunits<T> &a, const sunits<T> &b)
@@ -284,13 +285,17 @@ includes(const sunits<T> &a, const sunits<T> &b)
   for(const auto &cu: b)
     while(true)
       {
+        // We've reached the end of a, but cu was nowhere to be found.
         if (i == a.end())
           return false;
 
+        // If *i includes cu, then *i may include the next cu.
         if (includes(*i, cu))
           break;
 
-        if (cu.min() < i->min())
+        // If cu > *i, then cu either precedes or includes *i, and so
+        // cu cannot be included in a.
+        if (cu > *i)
           return false;
 
         ++i;
@@ -299,7 +304,8 @@ includes(const sunits<T> &a, const sunits<T> &b)
   return true;
 }
 
-// Every interval of b, has to be in a.
+// Every interval of b has to be in a. That's another implementation
+// that turned out to be slower (in some of my tests) than the above.
 template <typename T>
 bool
 includes2(const sunits<T> &a, const sunits<T> &b)
@@ -308,23 +314,25 @@ includes2(const sunits<T> &a, const sunits<T> &b)
 
   if (j != b.end())
     {
-      // This is the only search that can return i == a.begin();
       auto i = std::upper_bound(a.begin(), a.end(), *j,
                                 std::greater<cunits<T>>());
 
+      // Only the first search can return i == a.begin();
       if (i == a.begin())
         return false;
 
-      if (auto i2 = i; !includes(*--i2, *j))
-        return false;
-
-      // Check the next interval in b, if it exists.
-      while(++j != b.end())
+      while(true)
         {
+          // If *--i2 > *j, then *--i2 either precedes or includes *j,
+          // and so *--i2 cannot be included in a.
+          if (auto i2 = i; *--i2 > *j)
+            return false;
+
+          if (++j == b.end())
+            break;
+
           i = std::upper_bound(i, a.end(), *j,
                                std::greater<cunits<T>>());
-          if (auto i2 = i; !includes(*--i2, *j))
-            return false;
         }
     }
 
