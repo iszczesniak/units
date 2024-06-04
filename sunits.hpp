@@ -12,11 +12,11 @@
 #include <vector>
 
 // A sequence of non-overlapping intervals.  Intervals are stored in a
-// base container that we keep sorted.  Since the intervals do not
-// overlap (and so do not include one another), then < establishes
-// linear ordering.  It is enough to compare the intervals by the
-// lower endpoints only (and that is covered by the cases 1a and 3c,
-// and implemented by <=>).
+// base container that we keep sorted.  Since the intervals in the
+// container do not overlap (and so do not include one another), then
+// > establishes linear ordering (as < does too).  It is enough to
+// compare the intervals by the lower endpoints only (and that is
+// covered by the cases 1a and 3c, and implemented by <=>).
 //
 // To keep the implementation simple and efficient, we offer only the
 // minimal needed functionality:
@@ -26,11 +26,12 @@
 // * remove only an interval that is already included.
 //
 // To insert or remove an interval iv, we need to find the first
-// interval in the sequence that is greater than iv (that follows iv).
-// Function upper_bound(begin(), end(), iv) returns iterator i to the
-// first (as the iterator gets incremented, i.e., from left to right)
-// interval in the base container such that iv < *i.  The function may
-// return a pointer to the beginning or the end.
+// interval in the sequence that is less than iv (that follows iv).
+// Function upper_bound(begin(), end(), iv, std::greater<data_type>())
+// returns iterator i to the first (as the iterator gets incremented,
+// i.e., from left to right) interval in the base container such that
+// iv > *i.  The function may return a pointer to the beginning or the
+// end.
 
 template <typename T>
 struct sunits: private std::vector<cunits<T>>
@@ -86,8 +87,13 @@ struct sunits: private std::vector<cunits<T>>
     //
     // That's how it looks on the axis:
     //
-    //      p           iv       *i
-    // |----*======o----*===o----*======o------->
+    // 0    p           iv      *i
+    // |----*======o----*==o----*====o---->
+
+    //
+    // The container has in this order: p and then *i.  We insert iv.
+    //      p         iv      *i          0
+    // <----o====*----o==*----o======*----|
     auto i = std::upper_bound(begin(), end(), iv,
                               std::greater<data_type>());
     auto j = i;
@@ -200,10 +206,17 @@ private:
   }
 };
 
+// This is the default implementation that compares lexicographically.
 // We have to sort lexicographically ourselves, because the default
 // implementation of <=> is not available on OpenBSD yet.  Take a look
-// at the commented out defaulted declaration of member <=> above --
+// above at the commented out defaulted declaration of member <=> --
 // if that finally complies, we can remove the function below.
+//
+// The lexicographical ordering considers the non-empty range i
+// greater than an empty range j (i std::strong_ordering::greater j),
+// and so to have (i supset j) imply (i better j), then the better
+// must be the greater (>): e.g., ({{0, 5}} supset {}) implies that
+// ({{0, 5}} is better than {}), and so ({{0, 5} > {}).
 template <typename T>
 auto operator <=> (const sunits<T> &i, const sunits<T> &j)
 {
@@ -213,21 +226,33 @@ auto operator <=> (const sunits<T> &i, const sunits<T> &j)
   //                                               j.begin(),
   //                                               j.end());
 
+  // The following implementation is equivalent to the one above.
   auto ii = i.begin();
   auto ji = j.begin();
 
   for(; ii != i.end() && ji != j.end(); ++ii, ++ji)
     if (*ii == *ji)
+      // Keep going when the intervals are the same.
       continue;
     else
+      // When the intervals differ, return the result.  If *ii < *ji,
+      // then i < j.  If *ii > *ji, then i > j.
       return *ii <=> *ji;
 
+  // Up to now i and j have the same intervals, but we've reached the
+  // end of at least of them.
+
+  // We've reached the end of i, but not of j, and so j includes i,
+  // and therefore i < j, i.e., less.
   if (ii == i.end() && ji != j.end())
     return std::strong_ordering::less;
 
+  // We've reached the end of j, but not of i, and so i includes j,
+  // and therefore j < i, or equivalently i > j, i.e., greater.
   if (ii != i.end() && ji == j.end())
     return std::strong_ordering::greater;
 
+  // We've reached the end of both, so i and j are equal.
   return std::strong_ordering::equal;
 }
 
