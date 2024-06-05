@@ -19,7 +19,7 @@
 // covered by the cases 1a and 3c, and implemented by <=>).
 //
 // To keep the implementation simple and efficient, we offer only the
-// minimal needed functionality:
+// minimal functionality needed:
 //
 // * insert only an interval that in no part is already included,
 //
@@ -51,6 +51,18 @@ struct sunits: private std::vector<cunits<T>>
   }
 
   constexpr bool operator == (const sunits &) const = default;
+
+  // We can and we want to compare sunits lexicographically.  The
+  // lexicographical ordering considers the non-empty range i greater
+  // than an empty range j (i std::strong_ordering::greater j), and so
+  // to have (i supset j) imply (i better j), then the better must be
+  // the greater (>): e.g., ({{0, 5}} supset {}) implies that ({{0,
+  // 5}} is better than {}), and so ({{0, 5} > {}).
+
+  // The default implementation compares lexicographically.  The
+  // problem is the default implementation of <=> is not available on
+  // OpenBSD yet.  Take a look below for our own implementation.
+
   // constexpr auto operator <=> (const sunits &) const = default;
 
   using base_type::begin;
@@ -206,17 +218,9 @@ private:
   }
 };
 
-// This is the default implementation that compares lexicographically.
-// We have to sort lexicographically ourselves, because the default
-// implementation of <=> is not available on OpenBSD yet.  Take a look
+// The implementation that compares lexicographically.  Take a look
 // above at the commented out defaulted declaration of member <=> --
 // if that finally complies, we can remove the function below.
-//
-// The lexicographical ordering considers the non-empty range i
-// greater than an empty range j (i std::strong_ordering::greater j),
-// and so to have (i supset j) imply (i better j), then the better
-// must be the greater (>): e.g., ({{0, 5}} supset {}) implies that
-// ({{0, 5}} is better than {}), and so ({{0, 5} > {}).
 template <typename T>
 auto operator <=> (const sunits<T> &i, const sunits<T> &j)
 {
