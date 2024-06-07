@@ -354,7 +354,7 @@ includes2(const sunits<T> &a, const sunits<T> &b)
         {
           // If *j > *--i2 >, then *j either precedes or includes
           // *--i2, and so *j cannot be included in a.
-          if (auto i2 = i; *j > *--i2)
+          if (auto i2 = i; !includes(*--i2, *j))
             return false;
 
           if (++j == b.end())
