@@ -12,11 +12,45 @@
 #include <vector>
 
 // A sequence of non-overlapping intervals.  Intervals are stored in a
-// base container that we keep sorted.  Since the intervals in the
-// container do not overlap (and so do not include one another), then
-// > establishes linear ordering (as < does too).  It is enough to
-// compare the intervals by the lower endpoints only (and that is
-// covered by the cases 1a and 3c, and implemented by <=>).
+// base container that we keep sorted using std::greater that uses >
+// rewritten from <=>.  Since the intervals in the container do not
+// overlap (and so do not include one another), then > establishes
+// linear ordering.  It is enough to compare the intervals by the
+// lower or upper endpoints only.
+//
+// The intervals are compared like this:
+//
+// >>>
+// <=>
+// <<<
+//
+// By default the elements are sorted (using the upper_bound) with <,
+// and so elements go like this: i1 < i2 < i3.  In the container I
+// keep the intervals sorted with >, so the elements go like this: i1
+// > i2 > i3.
+//
+//         i1      >      i2      >      i3
+// |-------*======o-------*======o-------*===========o---------->
+//
+// Above i1 > i2, because min(i1) < min(i2).
+//
+// These are the intervals i such that i > j:
+//
+//         1a:        *=========o    i precedes j but doesn't include
+//
+//         1b:        *==========o   i includes j
+//         1c:        *===========o  i includes j
+//         2c:         *==========o  i includes j
+//
+// Interval j: |-------*=========o------->
+//
+// These are the intervals i such that i < j:
+//
+//         2a:         *========o    j includes i
+//         3a:          *=======o    j includes i
+//         3b:          *========o   j includes i
+//
+//         3c:          *=========o  j precedes i but doesn't include
 //
 // To keep the implementation simple and efficient, we offer only the
 // minimal functionality needed:
@@ -84,28 +118,23 @@ struct sunits: private std::vector<cunits<T>>
   {
     // Returns a position i where to insert iv.
     //
-    // Returned i is such that iv < *i, and since the intervals (iv
+    // Returned i is such that iv > *i, and since the intervals (iv
     // and in the container) do not overlap, then we put iv just
     // before *i.  If there is an interval p in the container that
-    // preceds *i, then iv should be placed afert p because p < iv
+    // preceds *i, then iv should be placed afert p because p > iv
     // holds:
     //
-    // * iv < p is false (because *i is the first from the left such
-    //   that iv < *i), so iv >= p holds (because < is total),
+    // * iv > p is false (because *i is the first from the left such
+    //   that iv > *i), so p >= iv holds (because > is total),
     //
     // * the intervals are totally ordered as they do not overlap,
     //
-    // * the intervals in the container are sorted with <.
+    // * the intervals in the container are sorted with >.
     //
     // That's how it looks on the axis:
     //
     // 0    p           iv      *i
     // |----*======o----*==o----*====o---->
-
-    //
-    // The container has in this order: p and then *i.  We insert iv.
-    //      p         iv      *i          0
-    // <----o====*----o==*----o======*----|
     auto i = std::upper_bound(begin(), end(), iv,
                               std::greater<data_type>());
     auto j = i;
@@ -146,16 +175,16 @@ struct sunits: private std::vector<cunits<T>>
   //
   // These are the possible intervals iv:
   //
-  //     *===o       p < vi
+  //     *===o       p > vi
   //     *=======*   p == vi
-  //         *===o   p < vi
-  //      *=====*    p < vi
+  //         *===o   p > vi
+  //      *=====*    p > vi
   //
-  // Since p must include or equal vi, then p <= iv.
+  // Since p must include or equal iv, then p >= iv.
   //
   // Here's the plan:
   //
-  // * find an interval pointed with i such that iv < *i,
+  // * find an interval pointed with i such that iv > *i,
   //
   // * there must be a interval p that precedes *i,
   //
@@ -163,19 +192,19 @@ struct sunits: private std::vector<cunits<T>>
   void
   remove(const data_type &iv)
   {
-    // Iterator i points to the first element for which iv < *i.
+    // Iterator i points to the first element for which iv > *i.
     auto i = std::upper_bound(begin(), end(), iv,
                               std::greater<data_type>());
 
-    // There must exist an element p previous to *i such that p <= iv.
+    // There must exist an element p previous to *i such that p >= iv.
     //
     // We know that:
     //
-    // * p <= iv - since p includes iv,
+    // * p >= iv - since p includes iv,
     //
-    // * interval *i is the first from left for which iv < *i.
+    // * interval *i is the first from left for which iv > *i.
     //
-    // And so: p <= iv < *i
+    // And so: p >= iv > *i
     assert(i != begin());
     --i;
 
@@ -334,7 +363,8 @@ includes(const sunits<T> &a, const sunits<T> &b)
 }
 
 // Every interval of b has to be in a. That's another implementation
-// that turned out to be slower (in some of my tests) than the above.
+// that turned out to be a bit slower (in some of my tests) than the
+// above.
 template <typename T>
 bool
 includes2(const sunits<T> &a, const sunits<T> &b)
@@ -352,8 +382,6 @@ includes2(const sunits<T> &a, const sunits<T> &b)
 
       while(true)
         {
-          // If *j > *--i2 >, then *j either precedes or includes
-          // *--i2, and so *j cannot be included in a.
           if (auto i2 = i; !includes(*--i2, *j))
             return false;
 
