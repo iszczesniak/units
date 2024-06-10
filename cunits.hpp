@@ -41,7 +41,7 @@
 // must imply the greater relation: if i sp j, then i > j.  However,
 // there are labels that do not compare with the inclusion relation
 // (the || relation), and we have to define linear ordering for them.
-// We have two choices.
+// We have two choices of defining <.
 //
 // The first choice:
 //
@@ -66,6 +66,13 @@
 //
 // The default <=> would lexicographically compare both the min's and
 // the max's with <.  First min's, then max's.  Without >.
+//
+// Both the first and the second choice is transitive, but we need to
+// go with the first choice, so that we can use such defined < to
+// compare sunits lexicographically.  If we went with the second
+// choice, then {{0, 1}, {5, 6}} < {{5, 6}} since {0, 1} < {5, 6} (as
+// 1 < 6).  That's not what we want, because the former should compare
+// better because it includes the latter.
 
 template <std::totally_ordered T>
 class cunits
