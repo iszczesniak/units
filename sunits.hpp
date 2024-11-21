@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <concepts>
 #include <initializer_list>
 #include <iostream>
 #include <list>
@@ -67,7 +68,7 @@
 // iv > *i.  The function may return a pointer to the beginning or the
 // end.
 
-template <typename T>
+template <std::totally_ordered T>
 struct sunits: private std::vector<cunits<T>>
 {
   using data_type = cunits<T>;
