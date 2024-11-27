@@ -274,7 +274,7 @@ auto operator <=> (const sunits<T> &i, const sunits<T> &j)
       return *ii <=> *ji;
 
   // Up to now i and j have the same intervals, but we've reached the
-  // end of at least of them.
+  // end of at least one of them.
 
   // We've reached the end of i, but not of j, and so j includes i,
   // and therefore i < j, i.e., less.
