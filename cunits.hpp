@@ -18,7 +18,9 @@
 //
 // * sp is a proper superset,
 //
-// * || is sb-incomparability: set inclusion relation does not hold.
+// * = is equality,
+//
+// * || is incomparability: neither inclusion nor equality holds.
 //
 // The < operator establishes an ordering needed for sorting in, e.g.,
 // containers.  We need <, because we cannot use the inclusion
@@ -43,7 +45,7 @@
 // (the || relation), and we have to define linear ordering for them.
 // We have two choices of defining <.
 //
-// The first choice:
+// 1st choice (intervals of lower endpoints are processed first):
 //
 // >>>
 // <=>
@@ -51,7 +53,7 @@
 //
 // i > j iff i.min < j.min or i.min == j.min and i.max > j.max
 //
-// The second choice:
+// 2nd choice (intervals of upper endpoints are processed first):
 //
 // <>>
 // <=>
